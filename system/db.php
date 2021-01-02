@@ -19,8 +19,6 @@
 			exit;
 		}
 	}
-	
-	public function db_test(){echo "db_test";}
 
 	public function proc($param){
 		$stmt = $this->db->prepare($param);
@@ -59,7 +57,6 @@
 
 	public function columnList($stmt)
 	{
-	
 		for ($i = 0; $i < $stmt->columnCount(); $i++) {
 			$col = $stmt->getColumnMeta($i);
 			$columns[]['data'] = $col['name'];
