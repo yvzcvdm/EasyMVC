@@ -1,4 +1,6 @@
-<?php class init
+<?php 
+
+class init
 {
 
     public function slug($str)

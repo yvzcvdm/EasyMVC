@@ -25,9 +25,9 @@
             else if (method_exists($nesne, "index"))
                 call_user_func(array($nesne, "index"), $params);
             else
-                require SYSTEM . '/404.php';
+                require VIEW . '/not_found_view.php';
         } else {
-            require SYSTEM . '/404.php';
+            require VIEW . '/not_found_view.php';
         }
     }
 

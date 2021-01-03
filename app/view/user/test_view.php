@@ -8,9 +8,9 @@
 </head>
 
 <body>
-    <h1>Login File</h1>
+    <h1>User Test File</h1>
     <hr>
-    Toplam Sayı : <?=$user["dataCount"]?>
+    Toplam Sayı : <?= $user["dataCount"] ?>
     <hr>
     <?foreach($user["data"] as $item){
         echo $item["user_name"].'<br>';

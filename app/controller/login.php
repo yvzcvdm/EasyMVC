@@ -1,22 +1,24 @@
-<?php class login extends login_Model
+<?php class login
 {
-    public $init;
-    
+
     public function __construct()
-    {   
+    {
         $this->init = new init();
         $this->view = new view();
+        $this->login_Model = new login_Model();
     }
 
-    public function index($param)
+    public function index($data)
     {
-
-        $this->view->view("login/index" ,$param);
+        $data["title"] = "Login";
+        $data["user"] = $this->login_Model->loginGet();
+        $this->view->export("login/index", $data);
     }
 
-    public function test($param)
+    public function test($data)
     {
-        echo "test controller<hr>";
-        echo '<pre>' . var_export($param, true) . '</pre>';
+        $data["title"] = "Login Test";
+        $data["user"] = $this->login_Model->loginGet();
+        $this->view->export("login/test", $data);
     }
 }

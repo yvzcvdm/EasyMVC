@@ -1,4 +1,4 @@
-<?php class login_Model
+<?php class user_Model
 {
     
     private $db;
@@ -8,7 +8,7 @@
         $this->db = new db();
     }
 
-    public function loginGet()
+    public function userGet()
     {
         return $this->db->proc("CALL `wb_user`();");
     }

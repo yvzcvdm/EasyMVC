@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <h1>Login File</h1>
+    <h1>User File</h1>
     <hr>
     Toplam Sayı : <?=$user["dataCount"]?>
     <hr>

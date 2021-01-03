@@ -6,6 +6,6 @@
     <title>404</title>
 </head>
 <body>
-    hatalı sayfa
+    Not Found
 </body>
 </html>
