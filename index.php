@@ -2,7 +2,6 @@
 
 DEFINE("ROOT"       , __DIR__);
 DEFINE("APP"        , ROOT."/app");
-DEFINE("MODULE"     , ROOT."/module");
 DEFINE("SYSTEM"     , ROOT."/system");
 DEFINE("CONTROLLER" , APP."/controller");
 DEFINE("MODEL"      , APP."/model");

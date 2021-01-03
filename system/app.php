@@ -36,7 +36,9 @@
     {
         $php_self = dirname($_SERVER['PHP_SELF']);
         $php_uri = $_SERVER['REQUEST_URI'];
-        return explode($php_self, $php_uri)[0];
+        $php_real = explode($php_self, $php_uri);
+        $php_real = array_values(array_filter($php_real));
+        return $php_real[0];
     }
 
     // Tüm girişler birleştiriliyor
