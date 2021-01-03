@@ -1,7 +1,11 @@
 <?php class app extends init
 {
+    
     public function __construct()
     {
+        ini_set('session.cookie_domain', substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], "."), 100));
+        session_start();
+        date_default_timezone_set('Europe/Istanbul');
         $this->app_run();
     }
 
@@ -15,7 +19,7 @@
             if (file_exists(MODEL . '/' . $file . '.php'))
                 require MODEL . '/' . $file . '.php';
             require CONTROLLER . '/' . $file . '.php';
-            $nesne = new $file($this);
+            $nesne = new $file();
             if (method_exists($nesne, $func))
                 call_user_func(array($nesne, $func), $params);
             else if (method_exists($nesne, "index"))
@@ -69,9 +73,6 @@
         }
     }
 
-
-
-
     // Yüklenen kontroller dosyasına ve çağırılan fonksiyona tüm php girişleri birleştirilip parametre olarak gönderiliyor
     private function params()
     {
@@ -93,9 +94,4 @@
         return $param;
     }
 
-    private function view()
-    {
-  
-        return "view";
-    }
 }
