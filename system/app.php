@@ -1,4 +1,5 @@
-<?php class app extends init
+<?php 
+class app extends init
 {
     
     public function __construct()
@@ -12,23 +13,10 @@
     // Uygulamanın dosyları ve dosyalara ait fonksiyonları bulunup parametreler işlenerek uygulama çalıştırılıyor
     private function app_run()
     {
-        $file = $this->get_file();
-        $func = $this->run_function();
-        $params = $this->params();
-        if (file_exists(CONTROLLER . '/' . $file . '.php')) {
-            if (file_exists(MODEL . '/' . $file . '.php'))
-                require MODEL . '/' . $file . '.php';
-            require CONTROLLER . '/' . $file . '.php';
-            $nesne = new $file();
-            if (method_exists($nesne, $func))
-                call_user_func(array($nesne, $func), $params);
-            else if (method_exists($nesne, "index"))
-                call_user_func(array($nesne, "index"), $params);
-            else
-                require VIEW . '/not_found_view.php';
-        } else {
-            require VIEW . '/not_found_view.php';
-        }
+ 
+        new login ();
+ 
+   
     }
 
     // Uygulamanın adres çubuğu ile dosya dizini karşılaştırılıyor
