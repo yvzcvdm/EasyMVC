@@ -4,7 +4,13 @@
 	public $db_user = "root";
 	public $db_pass = "";
 	public $db_name = "weebim_course";
-	public $db_port = "3306";
+	public $db_port = "3306";	
+	
+	// public $db_host = "localhost";
+	// public $db_user = "root";
+	// public $db_pass = "gXu!aIJVv1rk";
+	// public $db_name = "weebim_course";
+	// public $db_port = "3310";
 	public $db;
 
 	public function __construct()
@@ -40,5 +46,5 @@
 			$columns[]['data'] = $col['name'];
 		} 
 		return isset($columns) ? $columns:null;
-	}	
+	}
 }

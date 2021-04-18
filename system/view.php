@@ -1,12 +1,15 @@
 <?php class view
 {
+    public function __construct()
+    {
+        $this->init = new init();
+    }
 
     public function export($path, $data)
     {
         ob_start("sanitize_output");
-        foreach ($data as $key => $value) {
-            $$key = $data[$key] = $value;
-        }
+        extract($data);
+
         if (file_exists(VIEW . '/' . $path . '_view.php'))
             require VIEW . '/' . $path . '_view.php';
         else
