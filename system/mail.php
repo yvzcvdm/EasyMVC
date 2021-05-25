@@ -276,7 +276,7 @@ class SMTPMailer
         $this->ahead[] = 'X-Mailer: ' . 'PHP/' . phpversion();
         $this->ahead[] = 'MIME-Version: ' . '1.0';
 
-        $boundary = md5(uniqid());
+        $boundary = sha1(uniqid());
         // Email contents
         if (empty($this->file) || !file_exists($this->file[0])) {
             if ($this->text && $this->body) {

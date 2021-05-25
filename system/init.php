@@ -11,10 +11,10 @@ class init
 		$str = str_replace($tr, $eng, $str);
 		$str = preg_replace('/&.+?;/', '', $str);
 		$str = preg_replace('/[^%a-zA-Z0-9 _-]/', '', $str);
-		// $str = preg_replace('/\s+/', '-', $str);
+		$str = preg_replace('/\s+/', '-', $str);
 		$str = preg_replace('|-+|', '-', $str);
-		// $str = trim($str, '-');
-		// $str = strtolower($str);
+		$str = trim($str, '-');
+		$str = strtolower($str);
 		return $str;
 	}
 
@@ -37,39 +37,30 @@ class init
 		return $result;
 	}
 
-	public function daysLeft($gelecekTarih){
-		$gelecek = new DateTime($gelecekTarih); 
+	public function daysLeft($gelecekTarih)
+	{
+		$gelecek = new DateTime($gelecekTarih);
 		$bugun = new DateTime(date('d-m-Y'));
 		$zamanFarki = $gelecek->diff($bugun);
 		$kalanGun = $zamanFarki->format('%a');
 		return $kalanGun;
 	}
 
-	function timeAgo($tarih) {
-		
-		$cevrilenzaman = strtotime($tarih);	
-		//Zamanı strtotime fonksiyonu ile unix zaman damgasını alıyoruz. Yani Zamanı sayısal olarak alıyoruz.
-		
-		$zamanismi= array("Saniye", "Dakika", "Saat", "Gün", "Ay", "Yıl");
-		$sure= array("60","60","24","30","12","10");
- 
+	function timeAgo($tarih)
+	{
+		$cevrilenzaman = strtotime($tarih);
+		$zamanismi = array("Saniye", "Dakika", "Saat", "Gün", "Ay", "Yıl");
+		$sure = array("60", "60", "24", "30", "12", "10");
 		$simdikizaman = time();
-		//zamanı unix zaman damgası olarak alıyoruz.
-		
-		if($simdikizaman >= $cevrilenzaman) 
-		{
-			 $fark     = time()- $cevrilenzaman;
-			 for($i = 0; $fark >= $sure[$i] && $i < count($sure)-1; $i++) 
-			 {
-			 $fark = $fark / $sure[$i];
-			 }
- 
-			 $fark = round($fark);
-			 //fark değişkenini yuvarlıyor
-			 
-			 return $fark . " " . $zamanismi[$i] . " Önce";
+		if ($simdikizaman >= $cevrilenzaman) {
+			$fark     = time() - $cevrilenzaman;
+			for ($i = 0; $fark >= $sure[$i] && $i < count($sure) - 1; $i++) {
+				$fark = $fark / $sure[$i];
+			}
+			$fark = round($fark);
+			return $fark . " " . $zamanismi[$i] . " Önce";
 		}
-	 }
+	}
 
 	public function valid_email($e)
 	{
@@ -87,8 +78,8 @@ class init
 		$filtered_phone_number = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
 		$phone_to_check = str_replace("-", "", $filtered_phone_number);
 		return $phone_to_check;
-	}	
-	
+	}
+
 	public function clean_email($email)
 	{
 		$email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -144,16 +135,16 @@ class init
 
 	public function message($type, $content)
 	{
-		if($type == 'primary')
-			$export = '<div class="alert shake alert-icon alert-primary" role="alert"><i class="fe fe-bell mr-2" aria-hidden="true"></i>'.$content.'</div>';
-		elseif($type == 'success')
-			$export = '<div class="alert shake alert-icon alert-success" role="alert"><i class="fe fe-check mr-2" aria-hidden="true"></i>'.$content.'</div>';
-		elseif($type == 'danger')
-			$export = '<div class="alert shake alert-icon alert-danger" role="alert"><i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>'.$content.'</div>';		
-		elseif($type == 'info')
-			$export = '<div class="alert shake alert-info" role="alert"><i class="fe fe-info mr-2" aria-hidden="true"></i>'.$content.'</div>';		
-		elseif($type == 'warning')
-			$export = '<div class="alert shake alert-warning" role="alert"><i class="fe fe-alert-circle mr-2" aria-hidden="true"></i>'.$content.'</div>';
+		if ($type == 'primary')
+			$export = '<div class="alert shake alert-icon alert-primary" role="alert"><i class="fe fe-bell mr-2" aria-hidden="true"></i>' . $content . '</div>';
+		elseif ($type == 'success')
+			$export = '<div class="alert shake alert-icon alert-success" role="alert"><i class="fe fe-check mr-2" aria-hidden="true"></i>' . $content . '</div>';
+		elseif ($type == 'danger')
+			$export = '<div class="alert shake alert-icon alert-danger" role="alert"><i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>' . $content . '</div>';
+		elseif ($type == 'info')
+			$export = '<div class="alert shake alert-info" role="alert"><i class="fe fe-info mr-2" aria-hidden="true"></i>' . $content . '</div>';
+		elseif ($type == 'warning')
+			$export = '<div class="alert shake alert-warning" role="alert"><i class="fe fe-alert-circle mr-2" aria-hidden="true"></i>' . $content . '</div>';
 
 		return $export;
 	}
