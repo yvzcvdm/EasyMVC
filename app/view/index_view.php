@@ -7,6 +7,6 @@
     <title>Weebim MVC</title>
 </head>
 <body>
-    
+    <?var_dump($data);?>
 </body>
 </html>

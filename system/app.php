@@ -3,26 +3,7 @@
 
     public function __construct()
     {
-        //$this->loginControl();
         $this->app_run();
-        echo '<hr>';
-        echo 'File : ' . $this->get_file() . '<hr>';
-        echo 'Path : ' . $this->get_path() . '<hr>';
-        echo 'Func : ' . $this->get_function() . '<hr>';
-        echo '<pre>';
-        echo var_dump($this->get_param());
-        echo '</pre>';
-
-    }
-
-    public function loginControl()
-    {
-        if (strpos($_SERVER['REQUEST_URI'], "login") && isset($_SESSION["user"]))
-            header('Location: /dash');
-        else if ($_SERVER['REQUEST_URI'] == "/" && isset($_SESSION["user"]))
-            header('Location: /dash');
-        else if (!strpos($_SERVER['REQUEST_URI'], "login") && !isset($_SESSION["user"]))
-            header('Location: /login');
     }
 
     private function app_run()
@@ -149,6 +130,9 @@
         $param["GET"] = $_GET;
         $param["COOKIE"] = $_COOKIE;
         $param["SESSION"] = $_SESSION;
+        $param["app_file"] = $this->get_file();
+        $param["app_path"] = $this->get_path();
+        $param["app_function"] = $this->get_function();
         $param["URI"] = $_SERVER["REQUEST_URI"];
         $file_get = file_get_contents("php://input");
         $param["RAW"] = (array) json_decode($file_get, true);

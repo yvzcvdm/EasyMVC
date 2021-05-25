@@ -1,4 +1,4 @@
-<?php class user_Model
+<?php class index_Model
 {
 
     private $db;
@@ -6,7 +6,6 @@
     public function __construct()
     {
         $this->db = new db();
-        $this->user_id = $_SESSION["user"]["user_id"];
     }
 
     public function user($p = null)
