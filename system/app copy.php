@@ -3,13 +3,13 @@
 
     public function __construct($config)
     {
-        $this->app_run($config);
 
+        $this->app_run($config);
     }
 
     private function app_run($config)
     {
-        $path = $this->get_path();
+        $path = $this->route_path();
         $file = $this->get_file();
         $func = $this->get_function();
         $params = $this->get_param($config);
@@ -38,7 +38,6 @@
         }
     }
 
-    
 
     private function uri()
     {
@@ -52,6 +51,7 @@
     {
         $real = null;
         $re = null;
+
         foreach ($path as $ff) {
             $re .= DIRECTORY_SEPARATOR . $ff;
             if (!is_dir(CONTROLLER . $re))
@@ -61,11 +61,20 @@
         return ($real) ? $real .DIRECTORY_SEPARATOR:DIRECTORY_SEPARATOR;
     }
 
-    private function get_path()
+    private function app_path(){
+        $php_real = explode(ROOT,$_SERVER['DOCUMENT_ROOT']);
+
+        return $php_real[0];
+    }
+
+    private function route_path()
     {
         $php_self = dirname($_SERVER['PHP_SELF']);
-        $php_self = str_replace("\\", "/", $php_self);
         $php_real = explode($php_self, $this->uri());
+        $php_real = array_filter($php_real);
+        $php_real = array_values($php_real);
+        $php_real = array_shift($php_real);
+        $php_real = explode('/', $php_real);
         $php_real = array_filter($php_real);
         $php_real = array_values($php_real);
         $php_real = $this->is_path($php_real);
@@ -76,7 +85,7 @@
 
     private function get_file()
     {
-        $url_path = $this->get_path();
+        $url_path = $this->route_path();
         $url_path = explode($url_path, $this->uri());
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
@@ -84,13 +93,15 @@
         $file = array_filter($url_path);
         $file = array_shift($file);
         $file = $this->slug($file);
-        $file = file_exists(CONTROLLER . $this->get_path() . $file . '.php') ? $file : 'index';
+        echo CONTROLLER . $this->route_path() . $file . '.php';
+        exit;
+        $file = file_exists(CONTROLLER . $this->route_path() . $file . '.php') ? $file : 'index';
         return $file;
     }
 
     private function get_function()
     {
-        $url_path = $this->get_path();
+        $url_path = $this->route_path();
         if ($this->get_file() != "index")
             $url_path .= $this->get_file();
         $url_path = explode($url_path, $this->uri());
@@ -99,8 +110,9 @@
         $url_path = explode("/", $url_path);
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
-        $path = $this->get_path();
+        $path = $this->route_path();
         $file = $this->get_file();
+
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
@@ -117,7 +129,7 @@
 
     private function get_param($param = array())
     {
-        $url_path = $this->get_path();
+        $url_path = $this->route_path();
         if ($this->get_file() != "index")
             $url_path .= $this->get_file();
         if ($this->get_function() != "index")
@@ -161,7 +173,8 @@
         $param["app_cookie"] = $_COOKIE;
         $param["app_session"] = $_SESSION;
         $param["app_file"] = $this->get_file();
-        $param["app_path"] = $this->get_path();
+        $param["app_path"] = $this->app_path();
+        $param["app_route"] = $this->route_path();
         $param["app_function"] = $this->get_function();
         $param["app_uri"] = $_SERVER["REQUEST_URI"];
         $file_get = file_get_contents("php://input");

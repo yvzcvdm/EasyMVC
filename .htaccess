@@ -1,5 +1,8 @@
 <IfModule mod_rewrite.c>
 	Options +FollowSymLinks
 	RewriteEngine On
+	RewriteRule ^app/ - [F,L]
+	RewriteRule ^system/ - [F,L]
+	RewriteRule ^assets/ -  [L,NC]
 	RewriteRule ^ index.php [L,NC]
 </IfModule>

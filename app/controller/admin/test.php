@@ -1,4 +1,4 @@
-<? class index
+<? class test
 {
     public function  __construct()
     {
@@ -9,7 +9,7 @@
 
     public function index($data)
     {
-        $data["title"] = "Root Index Sayfa";
+        $data["title"] = "Index Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->index();
         $data["content"] = $data["lorem_200"];
@@ -18,7 +18,7 @@
 
     public function home($data)
     {
-        $data["title"] = "Root Anasayfa Sayfa";
+        $data["title"] = "Anasayfa Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->home();
         $data["content"] = $data["lorem_300"];
@@ -27,7 +27,7 @@
 
     public function corporate($data)
     {
-        $data["title"] = "Root Kurumsal Sayfa";
+        $data["title"] = "Kurumsal Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->corporate();
         $data["content"] = $data["lorem_200"];
@@ -37,7 +37,7 @@
     public function contact($data)
     {
 
-        $data["title"] = "Root İletişim Sayfa";
+        $data["title"] = "İletişim Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->contact();
         $data["content"] = $data["lorem_300"];
