@@ -132,6 +132,7 @@
         $param = array_merge($param, $this->input());
         return $this->array_clear($param);
     }
+    
 
     private function uri_get($url_path)
     {
