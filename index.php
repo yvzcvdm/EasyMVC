@@ -16,11 +16,9 @@ DEFINE("CONTROLLER", APP . "/controller");
 DEFINE("MODEL", APP . "/model");
 DEFINE("VIEW", APP . "/view");
 
-include(SYSTEM.'/config.php');
-
 spl_autoload_register(function ($className) {
     if (file_exists(SYSTEM . "/" . $className . ".php"))
         require_once SYSTEM . "/" . $className . ".php";
 });
 
-new app($config);
+new app();

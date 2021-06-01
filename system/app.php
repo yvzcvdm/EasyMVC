@@ -1,18 +1,17 @@
 <?php class app extends init
 {
 
-    public function __construct($config)
+    public function __construct()
     {
-        $this->app_run($config);
-
+        $this->app_run();
     }
 
-    private function app_run($config)
+    public function app_run()
     {
         $path = $this->get_path();
         $file = $this->get_file();
         $func = $this->get_function();
-        $params = $this->get_param($config);
+        $params = $this->get_param();
 
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
@@ -23,22 +22,14 @@
         });
 
         if (class_exists($file)) {
-            $nesne = new $file((array) $this);
+            $nesne = new $file($this);
             if (method_exists($nesne, $func))
                 call_user_func(array($nesne, $func), (array) $params);
-            else if (method_exists($nesne, "index"))
-                call_user_func(array($nesne, "index"), (array) $params);
-            else {
-                header("HTTP/1.0 404 Not Found");
-                die($config["error_404"]);
-            }
-        } else {
-            header("HTTP/1.0 404 Not Found");
-            die($config["error_404"]);
-        }
+            else
+                header("HTTP/1.0 404 Not Found").die("404 Sayfa Bulunamadı.\n");
+        }else
+            header("HTTP/1.0 404 Not Found").die("404 Sayfa Bulunamadı.\n");
     }
-
-    
 
     private function uri()
     {
@@ -54,11 +45,13 @@
         $re = null;
         foreach ($path as $ff) {
             $re .= DIRECTORY_SEPARATOR . $ff;
+            
             if (!is_dir(CONTROLLER . $re))
                 break;
             $real .= DIRECTORY_SEPARATOR  . $ff;
+
         }
-        return ($real) ? $real .DIRECTORY_SEPARATOR:DIRECTORY_SEPARATOR;
+        return ($real) ? $real . DIRECTORY_SEPARATOR : DIRECTORY_SEPARATOR;
     }
 
     private function get_path()
@@ -101,6 +94,7 @@
         $url_path = array_shift($url_path);
         $path = $this->get_path();
         $file = $this->get_file();
+
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
@@ -119,52 +113,44 @@
     {
         $url_path = $this->get_path();
         if ($this->get_file() != "index")
-            $url_path .= $this->get_file();
+            $url_path .= $this->get_file() . '/';
         if ($this->get_function() != "index")
-            $url_path .= $this->get_function();
-
+            $url_path .= $this->get_function() . '/';
         $url_path = explode($url_path, $this->uri());
-
         $url_path = array_filter($url_path);
-
-        $url_path = array_shift($url_path);
+        if (count($url_path) < 2) {
+            $url_path = array_shift($url_path);
+            $url_path = '/' . $url_path;
+            $url_path = explode("/", $url_path);
+            $url_path = array_filter($url_path);
+        }
         $param = array_merge($param, $this->uri_get($url_path));
         $param = array_merge($param, $this->input());
         return $this->array_clear($param);
     }
-    
 
     private function uri_get($url_path)
     {
         $param = array();
-        
- 
         if (isset($url_path)) {
-
-            $url_path = explode("/", $url_path);
-            
-            $url_path = array_filter($url_path);
- 
             foreach ($url_path as $key => $value) {
                 $param['app_uri_' . $key] = $value;
                 unset($param[$key]);
             }
- 
         }
-        
         return $param;
     }
 
     private function input($param = array())
     {
-        $param["app_post"] = $_POST;
-        $param["app_get"] = $_GET;
-        $param["app_cookie"] = $_COOKIE;
-        $param["app_session"] = $_SESSION;
         $param["app_file"] = $this->get_file();
         $param["app_path"] = $this->get_path();
         $param["app_function"] = $this->get_function();
         $param["app_uri"] = $_SERVER["REQUEST_URI"];
+        $param["app_post"] = $_POST;
+        $param["app_get"] = $_GET;
+        $param["app_cookie"] = $_COOKIE;
+        $param["app_session"] = $_SESSION;
         $file_get = file_get_contents("php://input");
         $param["app_raw"] = (array) json_decode($file_get, true);
         return array_filter($param);
@@ -173,7 +159,7 @@
     private function array_clear($array)
     {
         array_walk_recursive($array, function (&$item) {
-            $item = addslashes(stripslashes(trim($item)));
+            $item = htmlspecialchars(addslashes(stripslashes(trim($item))));
         });
         return $array;
     }

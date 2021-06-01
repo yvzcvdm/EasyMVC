@@ -126,13 +126,31 @@
     <div id="container">
         <h1><?= $title ?></h1>
         <ul>
-            <li><a href="/">Index</a></li>
-            <li><a href="/home/">Anasayfa</a></li>
-            <li><a href="/corporate/">Kurumsal</a></li>
-            <li><a href="/contact/">İletişim</a></li>
+            <li><a href="/param_1/param_2/?get_1=data_1&get_2=data_2">Index</a></li>
+            <li><a href="/home/param_1/param_2/?get_1=data_1&get_2=data_2">Anasayfa</a></li>
+            <li><a href="/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Kurumsal</a></li>
+            <li><a href="/contact/param_1/param_2/?get_1=data_1&get_2=data_2">İletişim</a></li>
+        </ul>
+        <ul>
+            <li><a href="/admin/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Index</a></li>
+            <li><a href="/admin/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Anasayfa</a></li>
+            <li><a href="/admin/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Kurumsal</a></li>
+            <li><a href="/admin/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin İletişim</a></li>
+        </ul>
+        <ul>
+            <li><a href="/test/param_1/param_2/?get_1=data_1&get_2=data_2">Test Index</a></li>
+            <li><a href="/test/home/param_1/param_2/?get_1=data_1&get_2=data_2">Test Anasayfa</a></li>
+            <li><a href="/test/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Test Kurumsal</a></li>
+            <li><a href="/test/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Test İletişim</a></li>
+        </ul>
+        <ul>
+            <li><a href="/admin/test/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Index</a></li>
+            <li><a href="/admin/test/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Anasayfa</a></li>
+            <li><a href="/admin/test/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Kurumsal</a></li>
+            <li><a href="/admin/test/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test İletişim</a></li>
         </ul>
         <div class="content">
-            <form action="?" method="post">
+            <form action="/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
                 <table>
                     <tr>
                         <td>Kullanıcı</td>
@@ -154,6 +172,10 @@
                 <tr>
                     <td>App Path : </td>
                     <td><?= $app_path ?></td>
+                </tr>
+                <tr>
+                    <td>App Route : </td>
+                    <td><?= $app_route ?></td>
                 </tr>
                 <tr>
                     <td>App File : </td>
@@ -181,7 +203,6 @@
                 </tr>
             </table>
         </div>
-        <div class="content"><?= $content ?></div>
         <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>
     </div>
 </body>
