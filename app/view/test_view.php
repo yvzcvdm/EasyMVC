@@ -126,39 +126,9 @@
     <div id="container">
         <h1><?= $title ?></h1>
         <ul>
-            <li><a href="<?=$app_path?>/param_1/param_2/?get_1=data_1&get_2=data_2">Index</a></li>
-            <li><a href="<?=$app_path?>/home/param_1/param_2/?get_1=data_1&get_2=data_2">Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2">İletişim</a></li>
-        </ul>
-        <ul>
-            <li><a href="<?=$app_path?>/admin/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Index</a></li>
-            <li><a href="<?=$app_path?>/admin/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/admin/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/admin/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin İletişim</a></li>
-        </ul>
-        <ul>
-            <li><a href="<?=$app_path?>/test/param_1/param_2/?get_1=data_1&get_2=data_2">Test Index</a></li>
-            <li><a href="<?=$app_path?>/test/home/param_1/param_2/?get_1=data_1&get_2=data_2">Test Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/test/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Test Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/test/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Test İletişim</a></li>
-        </ul>
-        <ul>
-            <li><a href="<?=$app_path?>/admin/test/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Index</a></li>
-            <li><a href="<?=$app_path?>/admin/test/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/admin/test/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/admin/test/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test İletişim</a></li>
-        </ul>        <ul>
-            <li><a href="<?=$app_path?>/admin/genel/test/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Index</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/test/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/test/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/test/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Test İletişim</a></li>
-        </ul>
-        <ul>
-            <li><a href="<?=$app_path?>/admin/genel/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Index</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/home/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/corporate/param_1/param_2/?get_1=data_1&get_2=data_2">Admin Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/admin/genel/contact/param_1/param_2/?get_1=data_1&get_2=data_2">Admin İletişim</a></li>
+            <li><a href="<?=$app_path?>/">Anasayfa</a></li>
+            <li><a href="<?=$app_path?>/corporate/">Kurumsal</a></li>
+            <li><a href="<?=$app_path?>/contact/">İletişim</a></li>
         </ul>
         <div class="content">
             <form action="<?=$app_path?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">

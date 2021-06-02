@@ -22,7 +22,6 @@
     public function json($data)
     {
         ob_start(array("view", "sanitize_output"));
-
         echo json_encode($data);
         ob_end_flush();
         $view = ob_get_contents();

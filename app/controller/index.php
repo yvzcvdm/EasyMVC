@@ -11,7 +11,7 @@
     public function index($data)
     {
 
-        $data["title"] = "Root Index Sayfa";
+        $data["title"] = "Anasayfa Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->home();
         $data["user_list"] = $this->index_Model->index($data);
@@ -19,18 +19,9 @@
         $this->view->html("test", $data);
     }
 
-    public function home($data)
-    {
-        $data["title"] = "Root Anasayfa Sayfa";
-        $data["text_code"] = $this->init->text_code();
-        $data["model_get"] = $this->test_Model->home();
-        
-        $this->view->html("test", $data);
-    }
-
     public function corporate($data)
     {
-        $data["title"] = "Root Kurumsal Sayfa";
+        $data["title"] = "Kurumsal Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->corporate();
         
@@ -40,7 +31,7 @@
     public function contact($data)
     {
 
-        $data["title"] = "Root İletişim Sayfa";
+        $data["title"] = "İletişim Sayfa";
         $data["text_code"] = $this->init->text_code();
         $data["model_get"] = $this->test_Model->contact();
         $this->view->html("test", $data);
