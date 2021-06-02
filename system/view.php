@@ -19,6 +19,17 @@
         ob_end_clean();
     }
 
+    public function json($data)
+    {
+        ob_start(array("view", "sanitize_output"));
+
+        echo json_encode($data);
+        ob_end_flush();
+        $view = ob_get_contents();
+        return $view;
+        ob_end_clean();
+    }
+
     private function sanitize_output($buffer)
     {
         $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');

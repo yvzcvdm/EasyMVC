@@ -56,20 +56,34 @@
 
     private function get_path()
     {
-        $php_self = dirname($_SERVER['PHP_SELF']);
-        $php_self = str_replace("\\", "/", $php_self);
-        $php_real = explode($php_self, $this->uri());
+        $php_real = dirname($_SERVER['PHP_SELF']);
+        $php_real = str_replace("\\", "/", $php_real);
+        $php_real = str_replace("//", "/", $php_real);
+        
+        $php_real = explode($php_real, $this->uri());
+        
         $php_real = array_filter($php_real);
         $php_real = array_values($php_real);
+        if (count($php_real) < 2) {
+            $php_real = array_shift($php_real);
+            $php_real = explode("/", $php_real);
+            $php_real = array_filter($php_real);
+        }
         $php_real = $this->is_path($php_real);
         $php_real = str_replace("\\", "/", $php_real);
         $php_real = str_replace("//", "/", $php_real);
         return $php_real;
     }
 
+    private function app_path(){
+        return dirname($_SERVER['PHP_SELF']);
+    }
+
     private function get_file()
     {
-        $url_path = $this->get_path();
+        $url_path = $this->app_path().$this->get_path();
+        $url_path = str_replace("\\", "/", $url_path);
+        $url_path = str_replace("//", "/", $url_path);
         $url_path = explode($url_path, $this->uri());
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
@@ -83,7 +97,9 @@
 
     private function get_function()
     {
-        $url_path = $this->get_path();
+        $url_path = $this->app_path().$this->get_path();
+        $url_path = str_replace("\\", "/", $url_path);
+        $url_path = str_replace("//", "/", $url_path);
         if ($this->get_file() != "index")
             $url_path .= $this->get_file();
         $url_path = explode($url_path, $this->uri());
@@ -111,7 +127,9 @@
 
     private function get_param($param = array())
     {
-        $url_path = $this->get_path();
+        $url_path = $this->app_path().$this->get_path();
+        $url_path = str_replace("\\", "/", $url_path);
+        $url_path = str_replace("//", "/", $url_path);
         if ($this->get_file() != "index")
             $url_path .= $this->get_file() . '/';
         if ($this->get_function() != "index")
@@ -144,7 +162,8 @@
     private function input($param = array())
     {
         $param["app_file"] = $this->get_file();
-        $param["app_path"] = $this->get_path();
+        $param["app_route"] = $this->get_path();
+        $param["app_path"] = $this->app_path();
         $param["app_function"] = $this->get_function();
         $param["app_uri"] = $_SERVER["REQUEST_URI"];
         $param["app_post"] = $_POST;

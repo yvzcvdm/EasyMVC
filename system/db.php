@@ -42,7 +42,7 @@
 
 	public function data_export($stmt)
 	{
-		@$stmt->execute();
+		$stmt->execute();
 		$result["column"] = $this->columnList($stmt);
 		$result["columnCount"] = $stmt->columnCount();
 		$result["error"] = $stmt->errorInfo();
