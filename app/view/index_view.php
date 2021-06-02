@@ -178,10 +178,6 @@
                     <td>Text Code : </td>
                     <td><?= $text_code ?></td>
                 </tr>
-                <tr>
-                    <td>Model CallBack : </td>
-                    <td><?= $model_get ?></td>
-                </tr>
             </table>
         </div>
         <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>

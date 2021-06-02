@@ -1,39 +1,29 @@
-<? class index
+<? class index extends init
 {
     public function  __construct()
     {
-        $this->init = new init();
-        $this->view = new view();
-        $this->test_Model = new test_Model();
         $this->index_Model = new index_Model();
     }
 
     public function index($data)
     {
-
         $data["title"] = "Anasayfa Sayfa";
-        $data["text_code"] = $this->init->text_code();
-        $data["model_get"] = $this->test_Model->home();
+        $data["text_code"] = init::text_code();
         $data["user_list"] = $this->index_Model->index($data);
-        
-        $this->view->html("test", $data);
+        view::html("index", $data);
     }
 
     public function corporate($data)
     {
         $data["title"] = "Kurumsal Sayfa";
-        $data["text_code"] = $this->init->text_code();
-        $data["model_get"] = $this->test_Model->corporate();
-        
-        $this->view->html("test", $data);
+        $data["text_code"] = init::text_code();
+        view::html("index", $data);
     }
 
     public function contact($data)
     {
-
         $data["title"] = "İletişim Sayfa";
-        $data["text_code"] = $this->init->text_code();
-        $data["model_get"] = $this->test_Model->contact();
-        $this->view->html("test", $data);
+        $data["text_code"] = init::text_code();
+        view::html("index", $data);
     }
 }

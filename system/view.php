@@ -12,7 +12,7 @@
         if (file_exists(VIEW . '/' . $path . '_view.php'))
             require VIEW . '/' . $path . '_view.php';
         else
-            require VIEW . '/not_found_view.php';
+            header("HTTP/1.0 404 Not Found").die("404 Sayfa Bulunamadı.\n");
         ob_end_flush();
         $view = ob_get_contents();
         return $view;

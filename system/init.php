@@ -1,9 +1,7 @@
 <?php
 
-class init
+class init extends view
 {
-
-
 	public function slug($str)
 	{
 		$tr = array('ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç');

@@ -1,18 +1,16 @@
-<?php class app extends init
+<? class app extends init
 {
-
     public function __construct()
     {
         $this->app_run();
     }
 
-    public function app_run()
+    private function app_run()
     {
         $path = $this->get_path();
         $file = $this->get_file();
         $func = $this->get_function();
         $params = $this->get_param();
-
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
@@ -20,38 +18,14 @@
             if (file_exists(MODEL . $path . $className . ".php"))
                 require_once MODEL . $path . $className . ".php";
         });
-
         if (class_exists($file)) {
             $nesne = new $file($this);
             if (method_exists($nesne, $func))
                 call_user_func(array($nesne, $func), (array) $params);
             else
-                header("HTTP/1.0 404 Not Found").die("404 Sayfa Bulunamadı.\n");
-        }else
-            header("HTTP/1.0 404 Not Found").die("404 Sayfa Bulunamadı.\n");
-    }
-
-    private function uri()
-    {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $uri = stripslashes(trim($uri));
-        $uri = str_replace("//", "/", $uri);
-        return addslashes($uri);
-    }
-
-    private function is_path($path)
-    {
-        $real = null;
-        $re = null;
-        foreach ($path as $ff) {
-            $re .= DIRECTORY_SEPARATOR . $ff;
-            
-            if (!is_dir(CONTROLLER . $re))
-                break;
-            $real .= DIRECTORY_SEPARATOR  . $ff;
-
-        }
-        return ($real) ? $real . DIRECTORY_SEPARATOR : DIRECTORY_SEPARATOR;
+                http_response_code(404). die("404 Sayfa Bulunamadı.\n");
+        } else
+            http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
     }
 
     private function get_path()
@@ -59,9 +33,7 @@
         $php_real = dirname($_SERVER['PHP_SELF']);
         $php_real = str_replace("\\", "/", $php_real);
         $php_real = str_replace("//", "/", $php_real);
-        
         $php_real = explode($php_real, $this->uri());
-        
         $php_real = array_filter($php_real);
         $php_real = array_values($php_real);
         if (count($php_real) < 2) {
@@ -75,13 +47,9 @@
         return $php_real;
     }
 
-    private function app_path(){
-        return dirname($_SERVER['PHP_SELF']);
-    }
-
     private function get_file()
     {
-        $url_path = $this->app_path().$this->get_path();
+        $url_path = $this->app_path() . $this->get_path();
         $url_path = str_replace("\\", "/", $url_path);
         $url_path = str_replace("//", "/", $url_path);
         $url_path = explode($url_path, $this->uri());
@@ -97,7 +65,7 @@
 
     private function get_function()
     {
-        $url_path = $this->app_path().$this->get_path();
+        $url_path = $this->app_path() . $this->get_path();
         $url_path = str_replace("\\", "/", $url_path);
         $url_path = str_replace("//", "/", $url_path);
         if ($this->get_file() != "index")
@@ -110,7 +78,6 @@
         $url_path = array_shift($url_path);
         $path = $this->get_path();
         $file = $this->get_file();
-
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
@@ -122,12 +89,13 @@
             $nesne = new $file((array) $this);
             $url_path = method_exists($nesne, $url_path) ? $url_path : "index";
         }
+        $url_path = empty($url_path)?"index":$url_path;
         return $this->slug($url_path);
     }
 
     private function get_param($param = array())
     {
-        $url_path = $this->app_path().$this->get_path();
+        $url_path = $this->app_path() . $this->get_path();
         $url_path = str_replace("\\", "/", $url_path);
         $url_path = str_replace("//", "/", $url_path);
         if ($this->get_file() != "index")
@@ -145,18 +113,6 @@
         $param = array_merge($param, $this->uri_get($url_path));
         $param = array_merge($param, $this->input());
         return $this->array_clear($param);
-    }
-
-    private function uri_get($url_path)
-    {
-        $param = array();
-        if (isset($url_path)) {
-            foreach ($url_path as $key => $value) {
-                $param['app_uri_' . $key] = $value;
-                unset($param[$key]);
-            }
-        }
-        return $param;
     }
 
     private function input($param = array())
@@ -181,5 +137,44 @@
             $item = htmlspecialchars(addslashes(stripslashes(trim($item))));
         });
         return $array;
+    }
+
+    private function uri()
+    {
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $uri = stripslashes(trim($uri));
+        $uri = str_replace("//", "/", $uri);
+        return addslashes($uri);
+    }
+
+    private function app_path()
+    {
+        return dirname($_SERVER['PHP_SELF']);
+    }
+
+    private function is_path($path)
+    {
+        $real = null;
+        $re = null;
+        foreach ($path as $ff) {
+            $re .= DIRECTORY_SEPARATOR . $ff;
+
+            if (!is_dir(CONTROLLER . $re))
+                break;
+            $real .= DIRECTORY_SEPARATOR  . $ff;
+        }
+        return ($real) ? $real . DIRECTORY_SEPARATOR : DIRECTORY_SEPARATOR;
+    }
+
+    private function uri_get($url_path)
+    {
+        $param = array();
+        if (isset($url_path)) {
+            foreach ($url_path as $key => $value) {
+                $param['app_uri_' . $key] = $value;
+                unset($param[$key]);
+            }
+        }
+        return $param;
     }
 }
