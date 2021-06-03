@@ -23,7 +23,7 @@
             if (method_exists($nesne, $func))
                 call_user_func(array($nesne, $func), (array) $params);
             else
-                http_response_code(404). die("404 Sayfa Bulunamadı.\n");
+                http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
         } else
             http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
     }
@@ -89,7 +89,7 @@
             $nesne = new $file((array) $this);
             $url_path = method_exists($nesne, $url_path) ? $url_path : "index";
         }
-        $url_path = empty($url_path)?"index":$url_path;
+        $url_path = empty($url_path) ? "index" : $url_path;
         return $this->slug($url_path);
     }
 
@@ -149,7 +149,7 @@
 
     private function app_path()
     {
-        return dirname($_SERVER['PHP_SELF']);
+        return dirname($_SERVER['PHP_SELF']) . '/';
     }
 
     private function is_path($path)

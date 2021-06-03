@@ -1,4 +1,4 @@
-<?php class db
+<? class db
 {
 	public $db_host = "localhost";
 	public $db_user = "root";

@@ -121,17 +121,16 @@
         }
     </style>
 </head>
-
 <body>
     <div id="container">
         <h1><?= $title ?></h1>
         <ul>
-            <li><a href="<?=$app_path?>/">Anasayfa</a></li>
-            <li><a href="<?=$app_path?>/corporate/">Kurumsal</a></li>
-            <li><a href="<?=$app_path?>/contact/">İletişim</a></li>
+            <li><a href="<?= $app_path ?>">Anasayfa</a></li>
+            <li><a href="<?= $app_path ?>corporate/">Kurumsal</a></li>
+            <li><a href="<?= $app_path ?>contact/">İletişim</a></li>
         </ul>
         <div class="content">
-            <form action="<?=$app_path?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
+            <form action="<?= $app_path ?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
                 <table>
                     <tr>
                         <td>Kullanıcı</td>
@@ -183,5 +182,4 @@
         <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>
     </div>
 </body>
-
 </html>

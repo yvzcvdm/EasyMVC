@@ -1,6 +1,4 @@
-<?php
-
-class SMTPMailer
+<? class SMTPMailer
 {
     private $server = 'smtp.yandex.com';
     private $port   =  465;
