@@ -126,6 +126,7 @@
         $param["app_get"] = $_GET;
         $param["app_cookie"] = $_COOKIE;
         $param["app_session"] = $_SESSION;
+        $param["app_files"] = $_FILES;
         $file_get = file_get_contents("php://input");
         $param["app_raw"] = (array) json_decode($file_get, true);
         return array_filter($param);
