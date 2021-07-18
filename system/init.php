@@ -1,4 +1,4 @@
-<? class init extends view
+<? class init
 {
 	public function slug($str)
 	{
