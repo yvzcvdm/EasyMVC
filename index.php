@@ -1,5 +1,4 @@
 <?
-session_start();
 DEFINE("ROOT", __DIR__);
 DEFINE("APP", ROOT . "/app");
 DEFINE("SYSTEM", ROOT . "/system");

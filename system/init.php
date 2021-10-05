@@ -1,4 +1,4 @@
-<? class init
+<? class init extends view
 {
 	public function slug($str)
 	{
@@ -14,12 +14,17 @@
 		return $str;
 	}
 
-	public function number_code($length = 4)
+	public function config($length = null)
+	{
+		return parse_ini_file(ROOT.'/app.ini');
+	}
+
+	public function random_number_code($length = 4)
 	{
 		return strrev(substr(rand(1111, 999999), 0, $length));
 	}
 
-	public function text_code($length = 4)
+	public function random_text_code($length = 4)
 	{
 		$characters = array();
 		$characters = array_merge(range(0, 9), range('a', 'z'), range('A', 'Z'));
@@ -33,28 +38,28 @@
 		return $result;
 	}
 
-	public function daysLeft($gelecekTarih)
+	public function days_left($date)
 	{
-		$gelecek = new DateTime($gelecekTarih);
-		$bugun = new DateTime(date('d-m-Y'));
-		$zamanFarki = $gelecek->diff($bugun);
-		$kalanGun = $zamanFarki->format('%a');
-		return $kalanGun;
+		$coming = new DateTime($date);
+		$now = new DateTime(date('d-m-Y'));
+		$difference = $coming->diff($now);
+		$remaining_day = $difference->format('%a');
+		return $remaining_day;
 	}
 
-	function timeAgo($tarih)
+	function time_left($tarih)
 	{
-		$cevrilenzaman = strtotime($tarih);
-		$zamanismi = array("Saniye", "Dakika", "Saat", "Gün", "Ay", "Yıl");
-		$sure = array("60", "60", "24", "30", "12", "10");
-		$simdikizaman = time();
-		if ($simdikizaman >= $cevrilenzaman) {
-			$fark     = time() - $cevrilenzaman;
-			for ($i = 0; $fark >= $sure[$i] && $i < count($sure) - 1; $i++) {
-				$fark = $fark / $sure[$i];
+		$convertime = strtotime($tarih);
+		$time_name = array("Saniye", "Dakika", "Saat", "Gün", "Ay", "Yıl");
+		$duration = array("60", "60", "24", "30", "12", "10");
+		$now_time = time();
+		if ($now_time >= $convertime) {
+			$difference     = time() - $convertime;
+			for ($i = 0; $difference >= $duration[$i] && $i < count($duration) - 1; $i++) {
+				$difference = $difference / $duration[$i];
 			}
-			$fark = round($fark);
-			return $fark . " " . $zamanismi[$i] . " Önce";
+			$difference = round($difference);
+			return $difference . " " . $time_name[$i];
 		}
 	}
 
@@ -66,20 +71,6 @@
 	public function valid_password($password)
 	{
 		return preg_match('/\S*((?=\S{8,})(?=\S*[A-Z]))\S*/', $password);
-	}
-
-	public function clean_phone($phone)
-	{
-		$phone = preg_replace('/\D+/', '', $phone);
-		$filtered_phone_number = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
-		$phone_to_check = str_replace("-", "", $filtered_phone_number);
-		return $phone_to_check;
-	}
-
-	public function clean_email($email)
-	{
-		$email = filter_var($email, FILTER_SANITIZE_EMAIL);
-		return $email;
 	}
 
 	public function valid_phone($phone)
@@ -117,6 +108,20 @@
 				return true;
 			}
 		}
+	}
+
+	public function clean_phone($phone)
+	{
+		$phone = preg_replace('/\D+/', '', $phone);
+		$filtered_phone_number = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
+		$phone_to_check = str_replace("-", "", $filtered_phone_number);
+		return $phone_to_check;
+	}
+
+	public function clean_mail($mail)
+	{
+		$mail = filter_var($mail, FILTER_SANITIZE_EMAIL);
+		return $mail;
 	}
 
 	public function send_mail($email, $subject, $content)

@@ -25,15 +25,6 @@
 
     public function __construct($server = false, $port = false, $secure = false)
     {
-        // Setup basic configuration
-        if (file_exists('conf/config_smtp.php')) {
-            include 'conf/config_smtp.php';
-            $this->server   = $cfg_server;
-            $this->port     = $cfg_port;
-            $this->secure   = $cfg_secure;
-            $this->username = $cfg_username;
-            $this->password = $cfg_password;
-        }
         if ($server !== false) {
             $this->server   = $server;
             $this->username = '';
