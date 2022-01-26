@@ -1,4 +1,4 @@
-<? class SMTPMailer
+<? class SMTPMailer extends init
 {
     private $server = 'smtp.yandex.com';
     private $port   =  465;
@@ -25,6 +25,11 @@
 
     public function __construct($server = false, $port = false, $secure = false)
     {
+
+        $config = $this->config();
+
+        
+
         if ($server !== false) {
             $this->server   = $server;
             $this->username = '';

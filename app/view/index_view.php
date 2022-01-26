@@ -125,12 +125,27 @@
     <div id="container">
         <h1><?= $title ?></h1>
         <ul>
-            <li><a href="<?= $app_path ?>">Anasayfa</a></li>
-            <li><a href="<?= $app_path ?>corporate/">Kurumsal</a></li>
-            <li><a href="<?= $app_path ?>contact/">İletişim</a></li>
+            <li><a href="<?= $app_root ?>">Anasayfa</a></li>
+            <li><a href="<?= $app_root ?>corporate/">Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>contact/">İletişim</a></li>
+        </ul>        
+        <ul>
+            <li><a href="<?= $app_root ?>yavuz">Yavuz</a></li>
+            <li><a href="<?= $app_root ?>yavuz/corporate/">Yavuz Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>yavuz/contact/">Yavuz İletişim</a></li>
+        </ul>        
+        <ul>
+            <li><a href="<?= $app_root ?>admin/">Admin</a></li>
+            <li><a href="<?= $app_root ?>admin/corporate/">Admin Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>admin/contact/">Admin İletişim</a></li>
         </ul>
+        <ul>
+            <li><a href="<?= $app_root ?>admin/yavuz">Admin Yavuz</a></li>
+            <li><a href="<?= $app_root ?>admin/yavuz/corporate/">Admin Yavuz Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>admin/yavuz/contact/">Admin Yavuz İletişim</a></li>
+        </ul>  
         <div class="content">
-            <form action="<?= $app_path ?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
+            <form action="<?= $app_root ?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
                 <table>
                     <tr>
                         <td>Kullanıcı</td>
@@ -150,12 +165,12 @@
         <div class="content">
             <table>
                 <tr>
-                    <td>App Path : </td>
-                    <td><?= $app_path ?></td>
+                    <td>App Root : </td>
+                    <td><?= $app_root ?></td>
                 </tr>
                 <tr>
-                    <td>App Route : </td>
-                    <td><?= $app_route ?></td>
+                    <td>App Path : </td>
+                    <td><?= $app_path ?></td>
                 </tr>
                 <tr>
                     <td>App File : </td>

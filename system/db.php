@@ -1,15 +1,12 @@
 <? class db extends init
 {
-
-
 	public $db;
 
 	public function __construct()
 	{
-		$dbinfo = $this->config();
-
+		$config = $this->config();
 		try {
-			$this->db = new PDO("mysql:host=$dbinfo[db_server];port=$dbinfo[db_port];dbname=$dbinfo[db_name]", $dbinfo['db_user'], $dbinfo['db_pass']);
+			$this->db = new PDO("mysql:host=$config[db_server];port=$config[db_port];dbname=$config[db_name]", $config['db_user'], $config['db_pass']);
 			$this->db->exec("set names utf8");
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		} catch (PDOException $e) {

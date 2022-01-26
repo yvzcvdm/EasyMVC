@@ -19,6 +19,14 @@
 		return parse_ini_file(ROOT.'/app.ini');
 	}
 
+	public function array_clear($array)
+    {
+        array_walk_recursive($array, function (&$item) {
+            $item = htmlspecialchars(addslashes(stripslashes(trim($item))));
+        });
+        return $array;
+    }
+
 	public function random_number_code($length = 4)
 	{
 		return strrev(substr(rand(1111, 999999), 0, $length));

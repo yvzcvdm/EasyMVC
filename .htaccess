@@ -7,8 +7,8 @@ php_flag display_errors on
 php_value error_log error.log
 php_value error_reporting -1
 
+Options +FollowSymLinks
 RewriteEngine On
-RewriteBase /
 
 # error custom page
 ErrorDocument 403 "Yasak!!"
@@ -26,20 +26,21 @@ RewriteRule ^assets/ -  [L,NC]
 RewriteRule ^ index.php [L,NC]
 
 # compress text, html, javascript, css, xml:
-AddOutputFilterByType DEFLATE text/plain
-AddOutputFilterByType DEFLATE text/html
-AddOutputFilterByType DEFLATE text/xml
-AddOutputFilterByType DEFLATE text/css
-AddOutputFilterByType DEFLATE application/xml
-AddOutputFilterByType DEFLATE application/xhtml+xml
-AddOutputFilterByType DEFLATE application/rss+xml
-AddOutputFilterByType DEFLATE application/javascript
-AddOutputFilterByType DEFLATE application/x-javascript
+<ifModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
 
+## Enable expiration control
 <IfModule mod_expires.c>
-    ## Enable expiration control
     ExpiresActive On
-
     ## CSS and JS expiration: 1 week after request
     ExpiresByType text/css "now plus 1 week"
     ExpiresByType application/javascript "now plus 1 week"
@@ -92,10 +93,6 @@ AddOutputFilterByType DEFLATE application/x-javascript
     ExpiresByType video/x-ms-asf "now plus 1 month"
 </IfModule>
 
-<FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">
-Header set Cache-Control "max-age=2592000, public"
-</FilesMatch>
-
 <ifModule mod_gzip.c>
     mod_gzip_on Yes
     mod_gzip_dechunk Yes
@@ -108,6 +105,9 @@ Header set Cache-Control "max-age=2592000, public"
 </ifModule>
 
 <IfModule mod_headers.c>
+    <FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
     <FilesMatch ".(js|css|xml|gz|html)$">
         Header append Vary: Accept-Encoding
     </FilesMatch>
