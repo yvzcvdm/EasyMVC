@@ -145,7 +145,7 @@
             <li><a href="<?= $app_root ?>admin/yavuz/contact/">Admin Yavuz İletişim</a></li>
         </ul>  
         <div class="content">
-            <form action="<?= $app_root ?>/contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
+            <form action="<?= $app_root ?>contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
                 <table>
                     <tr>
                         <td>Kullanıcı</td>

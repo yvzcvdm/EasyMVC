@@ -7,7 +7,7 @@
 
     public function index($data)
     {
-        $data["title"] = "Yavuz Sayfa";
+        $data["title"] = "Yavuz";
         $data["text_code"] = init::random_text_code();
         $data["user_list"] = $this->index_Model->index($data);
         view::html("index", $data);
@@ -15,14 +15,14 @@
 
     public function corporate($data)
     {
-        $data["title"] = "Kurumsal Sayfa";
+        $data["title"] = "Yavuz Kurumsal";
         $data["text_code"] = init::random_text_code();
         view::html("index", $data);
     }
 
     public function contact($data)
     {
-        $data["title"] = "İletişim Sayfa";
+        $data["title"] = "Yavuz İletişim";
         $data["text_code"] = init::random_text_code();
         view::html("index", $data);
     }
