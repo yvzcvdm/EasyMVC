@@ -24,6 +24,6 @@
     {
         $data["title"] = "İletişim";
         $data["text_code"] = init::random_text_code();
-        view::html("index", $data);
+        view::json($data);
     }
 }

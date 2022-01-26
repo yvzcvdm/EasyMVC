@@ -7,23 +7,24 @@ php_flag display_errors on
 php_value error_log error.log
 php_value error_reporting -1
 
-Options +FollowSymLinks
-RewriteEngine On
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # error custom page
+    ErrorDocument 403 "Yasak!!"
+    ErrorDocument 404 "Dosya yok!"
 
-# error custom page
-ErrorDocument 403 "Yasak!!"
-ErrorDocument 404 "Dosya yok!"
+    # disable directory browsing
+    Options All -Indexes
+    Options +FollowSymLinks
 
-# disable directory browsing
-Options All -Indexes
-
-# redirect index file
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^app/ - [F,L]
-RewriteRule ^system/ - [F,L]
-RewriteRule ^assets/ -  [L,NC]
-RewriteRule ^ index.php [L,NC]
+    # redirect index file
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^app/ - [F,L]
+    RewriteRule ^system/ - [F,L]
+    RewriteRule ^assets/ -  [L,NC]
+    RewriteRule ^ index.php [L,NC]
+</IfModule>
 
 # compress text, html, javascript, css, xml:
 <ifModule mod_deflate.c>

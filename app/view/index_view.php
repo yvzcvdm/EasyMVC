@@ -144,6 +144,16 @@
             <li><a href="<?= $app_root ?>admin/yavuz/corporate/">Admin Yavuz Kurumsal</a></li>
             <li><a href="<?= $app_root ?>admin/yavuz/contact/">Admin Yavuz İletişim</a></li>
         </ul>  
+        <ul>
+            <li><a href="<?= $app_root ?>admin/gog">Admin</a></li>
+            <li><a href="<?= $app_root ?>admin/gog/corporate/">Admin Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>admin/gog/contact/">Admin İletişim</a></li>
+        </ul>
+        <ul>
+            <li><a href="<?= $app_root ?>admin/gog/yavuz">Admin Yavuz</a></li>
+            <li><a href="<?= $app_root ?>admin/gog/yavuz/corporate/">Admin Yavuz Kurumsal</a></li>
+            <li><a href="<?= $app_root ?>admin/gog/yavuz/contact/">Admin Yavuz İletişim</a></li>
+        </ul>  
         <div class="content">
             <form action="<?= $app_root ?>contact/param_1/param_2/?get_1=data_1&get_2=data_2" method="post">
                 <table>
