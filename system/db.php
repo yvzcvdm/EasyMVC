@@ -1,18 +1,15 @@
 <? class db extends init
 {
-	public $db_host = $this->config()["db_server"];
-	public $db_user = $this->config()["db_user"];
-	public $db_pass = $this->config()["db_pass"];
-	public $db_name = $this->config()["db_name"];
-	public $db_port = $this->config()["db_port"];
+
 
 	public $db;
 
 	public function __construct()
 	{
+		$dbinfo = $this->config();
 
 		try {
-			$this->db = new PDO("mysql:host=$this->db_host;port=$this->db_port;dbname=$this->db_name", $this->db_user, $this->db_pass);
+			$this->db = new PDO("mysql:host=$dbinfo[db_server];port=$dbinfo[db_port];dbname=$dbinfo[db_name]", $dbinfo['db_user'], $dbinfo['db_pass']);
 			$this->db->exec("set names utf8");
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		} catch (PDOException $e) {
