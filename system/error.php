@@ -1,4 +1,5 @@
 <?php
+
 $code = $_SERVER['REDIRECT_STATUS'];
 $codes = array(
     400 => "Bad Request",
@@ -43,12 +44,9 @@ $codes = array(
     511 => "Network Authentication Required",
     599 => "Network connect timeout error"
 );
-
-
-
-
-
+header('HTTP/1.0 ' . $code . ' ' . $codes[$code], true, $code);
 $source_url = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
 
 ?>
 <!DOCTYPE html>
@@ -56,14 +54,19 @@ $source_url = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
 
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEU0OkArMjhobHEoPUPFEBIu
+O0L+AAC2FBZ2JyuNICOfGx7xAwTjCAlCNTvVDA1aLzQ3COjMAAAAVUlEQVQI12NgwAaCDSA0888G
+CItjn0szWGBJTVoGSCjWs8TleQCQYV95evdxkFT8Kpe0PLDi5WfKd4LUsN5zS1sKFolt8bwAZrCa
+GqNYJAgFDEpQAAAzmxafI4vZWwAAAABJRU5ErkJggg==" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Page</title>
+    <title>Error!</title>
     <style>
         html,
         body {
-            background: #ccc;
-            color: #333;
+            background: #444;
+            color: #aaa;
         }
 
         .content {
@@ -81,14 +84,37 @@ $source_url = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
         }
 
         h1 {
-            color: brown;
+            color: #e1c500;
             font-size: 45px;
-            margin-top:0px;
-            margin-bottom:5px;
+            margin-top: 0px;
+            margin-bottom: 5px;
         }
 
         p {
             font-size: 18px;
+        }
+
+        .code {
+            padding: 10px 15px;
+            border: 1px solid #000;
+            background: #333;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        a {
+            padding: 10px 15px;
+            display: block;
+            background: #e1c500;
+            margin-top: 20px;
+            color: #333;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background: #bda500;
         }
     </style>
 </head>
@@ -101,6 +127,8 @@ $source_url = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
         <? } else { ?>
             <p>Tanımlanamayan Hata!</p>
         <? } ?>
+        <p class="code"><?php echo $source_url; ?></p>
+        <a href="<?php echo $domain ?>">Home Page</a>
     </div>
 </body>
 

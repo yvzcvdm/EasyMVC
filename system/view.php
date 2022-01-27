@@ -12,7 +12,7 @@
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
-        extract($data,EXTR_SKIP);
+        extract($data, EXTR_SKIP);
         if (file_exists(VIEW . '/' . $path . '_view.php'))
             require VIEW . '/' . $path . '_view.php';
         else

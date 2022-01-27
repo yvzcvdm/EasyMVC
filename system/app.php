@@ -108,7 +108,7 @@
             $url_path .= $this->get_file() . '/';
         if ($this->get_function() != "index")
             $url_path .= $this->get_function() . '/';
-        $url_path = explode($url_path, $this->uri().'/');
+        $url_path = explode($url_path, $this->uri() . '/');
         $url_path = array_filter($url_path);
 
         if (count($url_path) < 2) {

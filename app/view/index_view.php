@@ -6,141 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?></title>
-    <style type="text/css">
-        ::selection {
-            background-color: #E13300;
-            color: white;
-        }
-
-        ::-moz-selection {
-            background-color: #E13300;
-            color: white;
-        }
-
-        body {
-            background-color: #efefef;
-            margin: 40px;
-            font: 13px/20px normal Helvetica, Arial, sans-serif;
-            color: #4F5155;
-        }
-
-        a {
-            color: #003399;
-            background-color: transparent;
-            font-weight: normal;
-        }
-
-        h1 {
-            color: #444;
-            background-color: transparent;
-            border-bottom: 1px solid #D0D0D0;
-            font-size: 24px;
-            font-weight: normal;
-            margin: 0;
-            padding: 20px;
-        }
-
-        code,
-        pre {
-            font-family: Consolas, Monaco, Courier New, Courier, monospace;
-            font-size: 12px;
-            background-color: #f9f9f9;
-            border: 1px solid #D0D0D0;
-            color: #002166;
-            display: block;
-            margin: 14px 0 14px 0;
-            padding: 12px 10px 12px 10px;
-            overflow: hidden;
-        }
-
-        #container {
-            max-width: 1000px;
-            background: #fff;
-            margin: 2% auto;
-            border: 1px solid #D0D0D0;
-            box-shadow: 0 0 8px #D0D0D0;
-        }
-
-        p {
-            margin: 12px 15px 12px 15px;
-        }
-
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            border-bottom: 1px solid #D0D0D0;
-            background: #f5f5f5;
-            overflow: auto;
-        }
-
-        ul li {
-            display: block;
-            float: left;
-            border-right: 1px solid #D0D0D0;
-        }
-
-        ul li a {
-            display: block;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        ul li a:hover {
-            background: #eaeaea;
-        }
-
-        div.content {
-            padding: 20px;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        table td:first-child {
-            text-align: right;
-            width: 15%;
-            min-width: 100px;
-            color: #000;
-            font-weight: bold;
-        }
-
-        table td {
-            padding: 5px;
-        }
-
-        form {
-            max-width: 300px;
-        }
-
-        form input {
-            display: block;
-
-        }
-
-        div.row {
-            padding:2%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-        }
-        div.col {width:100%;}
-    </style>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
+
+
     <div id="container">
+        <img class="logo" src="/assets/img/logo.png" alt="Logo">
         <h1><?= $title ?></h1>
+
         <ul>
             <li><a href="<?= $app_root ?>">Home</a></li>
             <li><a href="<?= $app_root ?>corporate/">Corporate</a></li>
-            <li><a href="<?= $app_root ?>contact">Contact</a></li>            
-        </ul>        
+            <li><a href="<?= $app_root ?>contact">Contact</a></li>
+        </ul>
         <div class="content">
             <div class="row">
                 <div class="col">
+                    <div class="user"><img src="/assets/upload/user.png" alt="Logo"></div>
+
                     <form action="<?= $app_uri ?>?get_1=data_1&get_2=data_2" method="post">
                         <table>
                             <tr>
@@ -196,6 +81,8 @@
 
         <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>
     </div>
+
+    <script src="/assets/js/script.js"></script>
 </body>
 
 </html>

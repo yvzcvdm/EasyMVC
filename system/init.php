@@ -16,16 +16,16 @@
 
 	public function config($length = null)
 	{
-		return parse_ini_file(ROOT.'/app.ini');
+		return parse_ini_file(ROOT . '/app.ini');
 	}
 
 	public function array_clear($array)
-    {
-        array_walk_recursive($array, function (&$item) {
-            $item = htmlspecialchars(addslashes(stripslashes(trim($item))));
-        });
-        return $array;
-    }
+	{
+		array_walk_recursive($array, function (&$item) {
+			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
+		});
+		return $array;
+	}
 
 	public function random_number_code($length = 4)
 	{
