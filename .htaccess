@@ -18,6 +18,7 @@ ErrorDocument 500 /index.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
     # disable directory browsing
     Options All -Indexes
     Options +FollowSymLinks
@@ -25,6 +26,7 @@ ErrorDocument 500 /index.php
     # redirect index file
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^app/controller/ - [F,L]
     RewriteRule ^app/ - [F,L]
     RewriteRule ^system/ - [F,L]
     RewriteRule ^assets/ -  [L,NC]
@@ -32,7 +34,7 @@ ErrorDocument 500 /index.php
 </IfModule>
 
 # Protect file
-<FilesMatch "\.(ini|log|md)$">
+<FilesMatch "\.(ini|log|md|htaccess)$">
   Require all denied
 </FilesMatch>
 
