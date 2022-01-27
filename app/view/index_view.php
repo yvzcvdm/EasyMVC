@@ -144,16 +144,16 @@
                     <form action="<?= $app_uri ?>?get_1=data_1&get_2=data_2" method="post">
                         <table>
                             <tr>
-                                <td>Kullanıcı</td>
+                                <td>User Name</td>
                                 <td><input type="text" name="user_name" value="<?= @$data["app_post"]["user_name"] ?>"></td>
                             </tr>
                             <tr>
-                                <td>Şifre</td>
+                                <td>Password</td>
                                 <td><input type="text" name="user_pass" value="<?= @$data["app_post"]["user_pass"] ?>"></td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td><input type="submit" value="Gönder"></td>
+                                <td><input type="submit" value="Test Send"></td>
                             </tr>
                         </table>
                     </form>
@@ -161,19 +161,19 @@
                 <div class="col">
                     <table>
                         <tr>
-                            <td>App Root : </td>
+                            <td>Root : </td>
                             <td><?= $app_root ?></td>
                         </tr>
                         <tr>
-                            <td>App Path : </td>
+                            <td>Path : </td>
                             <td><?= $app_path ?></td>
                         </tr>
                         <tr>
-                            <td>App File : </td>
+                            <td>File : </td>
                             <td><?= $app_file ?></td>
                         </tr>
                         <tr>
-                            <td>App Function : </td>
+                            <td>Function : </td>
                             <td><?= $app_function ?></td>
                         </tr>
                         <tr>
@@ -185,7 +185,7 @@
                             <td><?= $title ?></td>
                         </tr>
                         <tr>
-                            <td>Text Code : </td>
+                            <td>Random Code : </td>
                             <td><?= $text_code ?></td>
                         </tr>
                     </table>
