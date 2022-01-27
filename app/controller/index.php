@@ -15,15 +15,15 @@
 
     public function corporate($data)
     {
-        $data["title"] = "Kurumsal";
+        $data["title"] = "Corporate";
         $data["text_code"] = init::random_text_code();
         view::html("index", $data);
     }
 
     public function contact($data)
     {
-        $data["title"] = "İletişim";
+        $data["title"] = "Contact";
         $data["text_code"] = init::random_text_code();
-        view::json($data);
+        view::html("index", $data);
     }
 }
