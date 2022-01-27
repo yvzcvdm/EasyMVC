@@ -7,9 +7,8 @@
 
     public function index($data)
     {
-        $data["title"] = "Anasayfa";
+        $data["title"] = "Home";
         $data["text_code"] = init::random_text_code();
-        $data["user_list"] = $this->index_Model->index($data);
         view::html("index", $data);
     }
 

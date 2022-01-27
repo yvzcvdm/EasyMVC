@@ -119,67 +119,83 @@
             display: block;
 
         }
+
+        div.row {
+            padding:2%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        div.col {width:100%;}
     </style>
 </head>
+
 <body>
     <div id="container">
         <h1><?= $title ?></h1>
         <ul>
-            <li><a href="<?= $app_root ?>">Anasayfa</a></li>
-            <li><a href="<?= $app_root ?>corporate/">Kurumsal</a></li>
-            <li><a href="<?= $app_root ?>contact/">İletişim</a></li>
-        </ul>         
+            <li><a href="<?= $app_root ?>">Home</a></li>
+            <li><a href="<?= $app_root ?>corporate/">Corporate</a></li>
+            <li><a href="<?= $app_root ?>contact">Contact</a></li>            
+        </ul>        
         <div class="content">
-            <form action="<?= $app_uri?>?get_1=data_1&get_2=data_2" method="post">
-                <table>
-                    <tr>
-                        <td>Kullanıcı</td>
-                        <td><input type="text" name="user_name" value="<?= @$data["app_post"]["user_name"] ?>"></td>
-                    </tr>
-                    <tr>
-                        <td>Şifre</td>
-                        <td><input type="text" name="user_pass" value="<?= @$data["app_post"]["user_pass"] ?>"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><input type="submit" value="Gönder"></td>
-                    </tr>
-                </table>
-            </form>
+            <div class="row">
+                <div class="col">
+                    <form action="<?= $app_uri ?>?get_1=data_1&get_2=data_2" method="post">
+                        <table>
+                            <tr>
+                                <td>Kullanıcı</td>
+                                <td><input type="text" name="user_name" value="<?= @$data["app_post"]["user_name"] ?>"></td>
+                            </tr>
+                            <tr>
+                                <td>Şifre</td>
+                                <td><input type="text" name="user_pass" value="<?= @$data["app_post"]["user_pass"] ?>"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="submit" value="Gönder"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="col">
+                    <table>
+                        <tr>
+                            <td>App Root : </td>
+                            <td><?= $app_root ?></td>
+                        </tr>
+                        <tr>
+                            <td>App Path : </td>
+                            <td><?= $app_path ?></td>
+                        </tr>
+                        <tr>
+                            <td>App File : </td>
+                            <td><?= $app_file ?></td>
+                        </tr>
+                        <tr>
+                            <td>App Function : </td>
+                            <td><?= $app_function ?></td>
+                        </tr>
+                        <tr>
+                            <td>URI : </td>
+                            <td><?= $app_uri ?></td>
+                        </tr>
+                        <tr>
+                            <td>Title : </td>
+                            <td><?= $title ?></td>
+                        </tr>
+                        <tr>
+                            <td>Text Code : </td>
+                            <td><?= $text_code ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
         </div>
-        <div class="content">
-            <table>
-                <tr>
-                    <td>App Root : </td>
-                    <td><?= $app_root ?></td>
-                </tr>
-                <tr>
-                    <td>App Path : </td>
-                    <td><?= $app_path ?></td>
-                </tr>
-                <tr>
-                    <td>App File : </td>
-                    <td><?= $app_file ?></td>
-                </tr>
-                <tr>
-                    <td>App Function : </td>
-                    <td><?= $app_function ?></td>
-                </tr>
-                <tr>
-                    <td>URI : </td>
-                    <td><?= $app_uri ?></td>
-                </tr>
-                <tr>
-                    <td>Title : </td>
-                    <td><?= $title ?></td>
-                </tr>
-                <tr>
-                    <td>Text Code : </td>
-                    <td><?= $text_code ?></td>
-                </tr>
-            </table>
-        </div>
+
         <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>
     </div>
 </body>
+
 </html>
