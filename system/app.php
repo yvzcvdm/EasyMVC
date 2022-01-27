@@ -135,10 +135,10 @@
         $param["app_cookie"] = $_COOKIE;
         $param["app_session"] = $_SESSION;
         $param["app_files"] = $_FILES;
-        $file_get = file_get_contents("php://input");
-        $file_get = (array) json_decode($file_get, true);
-        $param["app_raw"] = is_array($file_get) ? $file_get : false;
-        return array_filter($param);
+        $input_raw = file_get_contents("php://input");
+        $input_array = (array) json_decode($input_raw, true);
+        $param["app_raw"] = is_array($input_array) ? $input_array : $input_raw;
+        return init::array_clear(array_filter($param));
     }
 
     private function uri()

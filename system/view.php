@@ -7,18 +7,16 @@
 
     public function html($path, $data)
     {
+        if (isset($data["app_get"]["json"]))
+            return $this->json($data);
+
         ob_start(array("view", "sanitize_output"));
-        if (isset($data["app_get"]["json"])) {
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode($data);
-        } else {
-            header('Content-Type:text/html; charset=UTF-8');
-            extract($data);
-            if (file_exists(VIEW . '/' . $path . '_view.php'))
-                require VIEW . '/' . $path . '_view.php';
-            else
-                http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
-        }
+        header('Content-Type:text/html; charset=UTF-8');
+        extract($data);
+        if (file_exists(VIEW . '/' . $path . '_view.php'))
+            require VIEW . '/' . $path . '_view.php';
+        else
+            http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
         ob_end_flush();
         $view = ob_get_contents();
         return $view;
