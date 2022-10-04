@@ -87,6 +87,7 @@
             $className = str_replace("_Model", "", $className);
             if (file_exists(MODEL . $path . $className . ".php"))
                 require_once MODEL . $path . $className . ".php";
+
         });
 
         if (class_exists($file)) {

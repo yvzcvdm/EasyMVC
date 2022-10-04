@@ -2,7 +2,7 @@
 {
 	public $db;
 
-	public function __construct()
+	public function connect()
 	{
 		$config = $this->config();
 		try {
@@ -15,6 +15,9 @@
 		}
 	}
 
+	public function test($test){
+		return $test;
+	}
 	public function proc($param)
 	{
 		$stmt = $this->db->prepare($param);

@@ -10,4 +10,8 @@
         $p_user_pass = isset($p["p_pass_new"]) ? sha1($p["p_pass_new"]) : "null";
         return db::proc("CALL `s_user`($p_sel,'$p_user_id','$p_user_name','$p_user_phone','$p_user_email','$p_user_pass');");
     }
+
+    public function yavuz($test) {
+        return $test;
+    }
 }

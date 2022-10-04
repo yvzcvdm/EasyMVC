@@ -23,7 +23,7 @@
         ob_end_clean();
     }
 
-    public function json($data)
+    static function json($data)
     {
         ob_start(array("view", "sanitize_output"));
         header('Content-Type: application/json; charset=utf-8');

@@ -28,8 +28,6 @@
 
         $config = $this->config();
 
-
-
         if ($server !== false) {
             $this->server   = $server;
             $this->username = '';
