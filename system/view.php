@@ -1,13 +1,8 @@
-<? class view
+<? class view extends init
 {
-    public function __construct()
-    {
-        $this->init = new init();
-    }
-
     public function html($path, $data)
     {
-        if (isset($data["app_get"]["json"]))
+        if (isset($data["app_get"]["json"]) || isset($data["app_session"]["json"]))
             return $this->json($data);
 
         ob_start(array("view", "sanitize_output"));
@@ -23,7 +18,7 @@
         ob_end_clean();
     }
 
-    static function json($data)
+    public function json($data)
     {
         ob_start(array("view", "sanitize_output"));
         header('Content-Type: application/json; charset=utf-8');

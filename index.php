@@ -5,6 +5,8 @@ DEFINE("SYSTEM", ROOT . "/system");
 DEFINE("CONTROLLER", APP . "/controller");
 DEFINE("MODEL", APP . "/model");
 DEFINE("VIEW", APP . "/view");
+DEFINE("APPINI", ROOT . '/app.ini');
+
 
 spl_autoload_register(function ($className) {
     if (file_exists(SYSTEM . "/" . $className . ".php"))

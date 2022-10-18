@@ -25,8 +25,14 @@
 
     public function __construct($server = false, $port = false, $secure = false)
     {
+        $app_ini = app::app_ini();
 
-        $config = $this->config();
+        var_dump($app_ini);
+        if (isset($app_ini["email"])) {
+            $this->server   = $server;
+            $this->username = '';
+            $this->password = '';
+        }
 
         if ($server !== false) {
             $this->server   = $server;

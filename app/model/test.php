@@ -1,8 +1,7 @@
 <? class test_Model extends db
 {
-
-
-    public function test($test) {
+    public function test($test)
+    {
         return $test;
     }
 }

@@ -1,4 +1,4 @@
-<? class init
+<? class init extends db
 {
 	public function slug($str)
 	{
@@ -12,11 +12,6 @@
 		$str = trim($str, '-');
 		$str = strtolower($str);
 		return $str;
-	}
-
-	public function config($length = null)
-	{
-		return parse_ini_file(ROOT . '/app.ini');
 	}
 
 	public function array_clear($array)

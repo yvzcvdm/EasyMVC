@@ -1,4 +1,4 @@
-<? class app extends init
+<? class app extends view
 {
     public function __construct()
     {
@@ -20,7 +20,12 @@
                 http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
         } else
             http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
-    }
+    }    
+
+    public function app_ini($length = null)
+	{
+		return parse_ini_file(ROOT . '/app.ini');
+	}
 
     private function get_path()
     {
