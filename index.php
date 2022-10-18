@@ -1,20 +1,21 @@
 <?
 DEFINE("ROOT", __DIR__);
-DEFINE("APP", ROOT . "/app");
-DEFINE("SYSTEM", ROOT . "/system");
-DEFINE("CONTROLLER", APP . "/controller");
-DEFINE("MODEL", APP . "/model");
-DEFINE("VIEW", APP . "/view");
-DEFINE("APPINI", ROOT . '/app.ini');
+DEFINE("SEP", DIRECTORY_SEPARATOR);
+DEFINE("APP", ROOT . SEP . "app");
+DEFINE("SYSTEM", ROOT . SEP . "system");
+DEFINE("CONTROLLER", APP . SEP . "controller");
+DEFINE("MODEL", APP . SEP . "model");
+DEFINE("VIEW", APP . SEP . "view");
+DEFINE("APPINI", ROOT . SEP . 'app.ini');
 
 
 spl_autoload_register(function ($className) {
-    if (file_exists(SYSTEM . "/" . $className . ".php"))
-        require_once SYSTEM . "/" . $className . ".php";
+    if (file_exists(SYSTEM . SEP . $className . ".php"))
+        require_once SYSTEM .SEP . $className . ".php";
 });
 
 
 if ($_SERVER['REDIRECT_STATUS'] >= 400)
-    require_once SYSTEM . "/error.php";
+    require_once SYSTEM . SEP."error.php";
 else
     new app();
