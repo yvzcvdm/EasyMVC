@@ -1,4 +1,4 @@
-<? class index extends app
+<? class user extends app
 {
     public function  __construct()
     {
@@ -7,19 +7,19 @@
 
     public function index($data)
     {
-        $data["title"] = "Admin";
+        $data["title"] = "User List";
         view::html("index", $data);
     }
 
-    public function users($data)
+    public function edit($data)
     {
-        $data["title"] = "Users";
+        $data["title"] = "Edit";
         view::html("index", $data);
     }
 
-    public function settings($data)
+    public function add($data)
     {
-        $data["title"] = "Settings";
+        $data["title"] = "Add";
         view::html("index", $data);
     }
 }

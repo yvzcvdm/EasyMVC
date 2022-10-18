@@ -9,8 +9,6 @@
     public function index($data)
     {
         $data["title"] = "Home";
-        $data["text_code"] = $this->test_Model->test("test model");
-        $data["text_code1"] = $this->index_Model->test("Index model");
         view::html("index", $data);
     }
 

@@ -20,6 +20,16 @@
             <li><a href="<?= $app_root ?>">Home</a></li>
             <li><a href="<?= $app_root ?>corporate/">Corporate</a></li>
             <li><a href="<?= $app_root ?>contact">Contact</a></li>
+        </ul>        
+        <ul>
+            <li><a href="<?= $app_root ?>admin/">Admin</a></li>
+            <li><a href="<?= $app_root ?>admin/users/">Users</a></li>
+            <li><a href="<?= $app_root ?>admin/settings">Settings</a></li>
+        </ul>        
+        <ul>
+            <li><a href="<?= $app_root ?>admin/user">user</a></li>
+            <li><a href="<?= $app_root ?>admin/user/add">Add</a></li>
+            <li><a href="<?= $app_root ?>admin/user/edit">Edit</a></li>
         </ul>
         <div class="content">
             <div class="row">
