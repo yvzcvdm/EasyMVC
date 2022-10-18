@@ -11,6 +11,7 @@ spl_autoload_register(function ($className) {
         require_once SYSTEM . "/" . $className . ".php";
 });
 
+
 if ($_SERVER['REDIRECT_STATUS'] >= 400)
     require_once SYSTEM . "/error.php";
 else

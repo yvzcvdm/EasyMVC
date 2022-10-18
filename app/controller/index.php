@@ -3,7 +3,6 @@
     public function  __construct()
     {
         $this->index_Model = new index_Model();
-        $this->db = new db();
     }
 
     public function index($data)

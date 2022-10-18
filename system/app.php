@@ -11,13 +11,7 @@
         $file = $this->get_file();
         $func = $this->get_function();
         $params = $this->get_param();
-        spl_autoload_register(function ($className) use ($path) {
-            if (file_exists(CONTROLLER . $path . $className . ".php"))
-                require_once CONTROLLER . $path . $className . ".php";
-            $className = str_replace("_Model", "", $className);
-            if (file_exists(MODEL . $path . $className . ".php"))
-                require_once MODEL . $path . $className . ".php";
-        });
+
         if (class_exists($file)) {
             $nesne = new $file($this);
             if (method_exists($nesne, $func))
@@ -90,11 +84,11 @@
 
         });
 
-        if (class_exists($file)) {
-            $nesne = new $file((array) $this);
+        // if (class_exists($file)) {
+        //     $nesne = new $file((array) $this);
 
-            $url_path = method_exists($nesne, $url_path) ? $url_path : "index";
-        }
+        //     // $url_path = method_exists($nesne, $url_path) ? $url_path : "index";
+        // }
 
         $url_path = empty($url_path) ? "index" : $url_path;
         return $this->slug($url_path);
