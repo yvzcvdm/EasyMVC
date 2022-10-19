@@ -9,18 +9,18 @@
     {
         $data["title"] = "Admin";
         $data["text_code"] = init::random_text_code(10);
-        view::html("index", $data);
+        view::layout("index", $data);
     }
 
     public function users($data)
     {
         $data["title"] = "Users";
-        view::html("index", $data);
+        view::layout("index", $data);
     }
 
     public function settings($data)
     {
         $data["title"] = "Settings";
-        view::html("index", $data);
+        view::layout("index", $data);
     }
 }

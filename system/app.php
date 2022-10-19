@@ -160,6 +160,29 @@
         return $param;
     }
 
+    private function get_model($file_name = null, $dir = null)
+    {
+        $return = null;
+        $dir = ($dir) ? $dir : MODEL;
+        if (!is_dir($dir) || empty($file_name)) return false;
+        $root = scandir($dir);
+        foreach ($root as $value) {
+            if ($value === '.' || $value === '..') continue;
+            if (is_file($dir . SEP . $value)) {
+                $pathinfo = pathinfo($dir . SEP . $value);
+                if ($pathinfo['extension'] == 'php' && $file_name == $pathinfo['filename']) {
+                    return $dir . SEP . $value;
+                
+                }
+            }
+            
+            if (is_dir($dir . SEP . $value)) {
+                $file = $this->get_model($file_name, $dir . SEP . $value);
+                if($file) return $file;
+            }
+        }
+    }
+
     public function __destruct()
     {
         $path = $this->path;
@@ -167,8 +190,11 @@
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
             $className = str_replace("_Model", "", $className);
-            if (file_exists(MODEL . $path . $className . ".php"))
-                require_once MODEL . $path . $className . ".php";
+          
+            $get_model = $this->get_model($className);
+            
+            if (file_exists($get_model))
+                require_once $get_model;
         });
 
         if (class_exists($this->file)) {

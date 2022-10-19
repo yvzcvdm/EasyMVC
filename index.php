@@ -13,6 +13,7 @@ DEFINE("SYSTEM", ROOT . SEP . "system");
 DEFINE("CONTROLLER", APP . SEP . "controller");
 DEFINE("MODEL", APP . SEP . "model");
 DEFINE("VIEW", APP . SEP . "view");
+DEFINE("LAYOUT", APP . SEP . "layout");
 DEFINE("APPINI", ROOT . SEP . 'app.ini');
 
 spl_autoload_register(function ($className) {
