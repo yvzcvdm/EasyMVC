@@ -1,9 +1,20 @@
-<?php class view extends init
+<?php abstract class view extends init
 {
+
+    private function sanitize_output($buffer)
+    {
+        $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');
+        $replace = array('>', '<', '\\1', '');
+        $buffer = preg_replace($search, $replace, $buffer);
+        return $buffer;
+    }
+
     public function html($path, $data)
     {
-        if (isset($data["app_get"]["json_export"]) || isset($data["app_session"]["json_export"]))
-            return $this->json($data);
+        if (isset($data["app_get"]["view_json"]))
+            return $this->json($data) . die();
+        elseif (isset($data["app_get"]["view_layout"]))
+            return $this->layout($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
@@ -20,8 +31,10 @@
 
     public function layout($path, $data)
     {
-        if (isset($data["app_get"]["json_export"]) || isset($data["app_session"]["json_export"]))
-            return $this->json($data);
+        if (isset($data["app_get"]["view_json"]))
+            return $this->json($data) . die();
+        elseif (isset($data["app_get"]["view_html"]))
+            return $this->html($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
@@ -51,13 +64,5 @@
         $view = ob_get_contents();
         return $view;
         ob_end_clean();
-    }
-
-    private function sanitize_output($buffer)
-    {
-        $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');
-        $replace = array('>', '<', '\\1', '');
-        $buffer = preg_replace($search, $replace, $buffer);
-        return $buffer;
     }
 }
