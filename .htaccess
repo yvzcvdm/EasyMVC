@@ -1,21 +1,4 @@
-# session auto start
-php_value session.auto_start 1
-
-# error handling
-php_flag log_errors on
-php_flag display_errors off
-php_value error_log error.log
-php_value error_reporting -1
-
-# error custom page
-ErrorDocument 403 /index.php
-ErrorDocument 408 /index.php
-ErrorDocument 405 /index.php
-ErrorDocument 400 /index.php
-ErrorDocument 404 /index.php
-ErrorDocument 500 /index.php
-
-
+# Redirection
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -28,7 +11,7 @@ ErrorDocument 500 /index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^app/controller/ - [F,L]
     RewriteRule ^app/ - [F,L]
-    RewriteRule ^system/ - [F,L]
+    RewriteRule ^system/ - [L,NC]
     RewriteRule ^assets/ -  [L,NC]
     RewriteRule ^ index.php [L,NC]
 </IfModule>
@@ -38,17 +21,15 @@ ErrorDocument 500 /index.php
   Require all denied
 </FilesMatch>
 
-# compress text, html, javascript, css, xml:
-<ifModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
+# Set Headers
+<IfModule mod_headers.c>
+    Header always edit Set-Cookie (.*) "$1; SameSite=None; Secure"
+    <FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
+    <FilesMatch ".(js|css|xml|gz|html)$">
+        Header append Vary: Accept-Encoding
+    </FilesMatch>
 </IfModule>
 
 ## Enable expiration control
@@ -106,6 +87,7 @@ ErrorDocument 500 /index.php
     ExpiresByType video/x-ms-asf "now plus 1 month"
 </IfModule>
 
+# compress text, html, javascript, css, xml:
 <ifModule mod_gzip.c>
     mod_gzip_on Yes
     mod_gzip_dechunk Yes
@@ -117,12 +99,15 @@ ErrorDocument 500 /index.php
     mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
 </ifModule>
 
-<IfModule mod_headers.c>
-    Header always edit Set-Cookie (.*) "$1; SameSite=None; Secure"
-    <FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">
-        Header set Cache-Control "max-age=2592000, public"
-    </FilesMatch>
-    <FilesMatch ".(js|css|xml|gz|html)$">
-        Header append Vary: Accept-Encoding
-    </FilesMatch>
+# compress text, html, javascript, css, xml:
+<ifModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
 </IfModule>

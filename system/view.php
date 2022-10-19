@@ -2,7 +2,7 @@
 {
     public function html($path, $data)
     {
-        if (isset($data["app_get"]["json"]) || isset($data["app_session"]["json"]))
+        if (isset($data["app_get"]["json_export"]) || isset($data["app_session"]["json_export"]))
             return $this->json($data);
 
         ob_start(array("view", "sanitize_output"));

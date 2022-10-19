@@ -1,7 +1,8 @@
 <?php
-header('HTTP/1.0 404 Not Found', true, 404);
 $code = $_SERVER['REDIRECT_STATUS'];
 $codes = array(
+    null => "Page Not Found",
+    200 => "Page Not Found",
     400 => "Bad Request",
     401 => "Unauthorized",
     402 => "Payment Required",
@@ -49,86 +50,156 @@ $source_url = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
 $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
 
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEU0OkArMjhobHEoPUPFEBIu
-O0L+AAC2FBZ2JyuNICOfGx7xAwTjCAlCNTvVDA1aLzQ3COjMAAAAVUlEQVQI12NgwAaCDSA0888G
-CItjn0szWGBJTVoGSCjWs8TleQCQYV95evdxkFT8Kpe0PLDi5WfKd4LUsN5zS1sKFolt8bwAZrCa
-GqNYJAgFDEpQAAAzmxafI4vZWwAAAABJRU5ErkJggg==" />
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><?php echo $codes[$code]?></title>
+
     <style>
-        html,
-        body {
-            background: #eee;
-            color: #aaa;
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box
         }
 
-        .content {
+        body {
+            padding: 0;
+            margin: 0
+        }
+
+        #notfound {
+            position: relative;
+            height: 100vh
+        }
+
+        #notfound .notfound {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%)
+        }
+
+        .notfound {
+            max-width: 460px;
+            width: 100%;
+            text-align: center;
+            line-height: 1.4
+        }
+
+        .notfound .notfound-404 {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 50px
+        }
+
+        .notfound .notfound-404>div:first-child {
             position: absolute;
             left: 0;
+            right: 0;
             top: 0;
             bottom: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: #ffa200;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+            border: 5px dashed #000;
+            border-radius: 5px
+        }
+
+        .notfound .notfound-404>div:first-child:before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            top: -5px;
+            -webkit-box-shadow: 0 0 0 5px rgba(0, 0, 0, .1) inset;
+            box-shadow: 0 0 0 5px rgba(0, 0, 0, .1) inset;
+            border-radius: 5px
+        }
+
+        .notfound .notfound-404 h1 {
+            font-family: cabin, sans-serif;
+            color: #000;
+            font-weight: 700;
+            margin: 0;
+            font-size: 90px;
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            left: 50%;
             text-align: center;
-            padding: 10px;
-            justify-content: center;
+            height: 40px;
+            line-height: 40px
         }
 
-        h1 {
-            color: #e1c500;
-            font-size: 45px;
-            margin-top: 0px;
-            margin-bottom: 5px;
+        .notfound h2 {
+            font-family: cabin, sans-serif;
+            font-size: 33px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px
         }
 
-        p {
-            font-size: 18px;
+        .notfound p {
+            font-family: cabin, sans-serif;
+            font-size: 16px;
+            color: #000;
+            font-weight: 400
         }
 
-        .code {
-            padding: 10px 15px;
-            border: 1px solid #000;
-            background: #333;
-            font-size: 14px;
-            border-radius: 5px;
-        }
-
-        a {
-            padding: 10px 15px;
-            display: block;
-            background: #e1c500;
-            margin-top: 20px;
+        .notfound a {
+            font-family: cabin, sans-serif;
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #ffa200;
+            border: none;
+            border-radius: 40px;
             color: #333;
-            font-weight: bold;
+            border:1px solid #000;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
             text-decoration: none;
-            border-radius: 5px;
+            -webkit-transition: .2s all;
+            transition: .2s all
         }
 
-        a:hover {
-            background: #bda500;
+        .notfound a:hover {
+            background-color: #2c2c2c;
+            color:#fff;
         }
     </style>
+
+    <!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+    <meta name="robots" content="noindex, follow">
 </head>
 
 <body>
-    <div class="content">
-        <?php if (array_key_exists($code, $codes) && is_numeric($code)) { ?>
-            <h1><?php echo $code ?></h1>
-            <p><?php echo $codes[$code] ?></p>
-        <? } else { ?>
-            <p>Tanımlanamayan Hata!</p>
-        <? } ?>
-        <p class="code"><?php echo $source_url; ?></p>
-        <a href="<?php echo $domain ?>">Home Page</a>
+    
+    <div id="notfound">
+        <div class="notfound">
+            <div class="notfound-404">
+                <div></div>
+                <h1><?php echo ($code == 200 || empty($code))?404:$code ?></h1>
+            </div>
+            <h2><?php echo $codes[$code]?></h2>
+            <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
+            <a href="<?php echo $domain ?>"><?=$_SERVER['HTTP_HOST']?></a>
+        </div>
     </div>
 </body>
 
