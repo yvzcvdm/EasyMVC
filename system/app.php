@@ -162,12 +162,13 @@
 
     private function get_model($file_name = null, $dir = null)
     {
-        $return = null;
         $dir = ($dir) ? $dir : MODEL;
         if (!is_dir($dir) || empty($file_name)) return false;
-        $root = scandir($dir);
+
+
+        $root = array_diff(scandir($dir), array('.', '..'));
+
         foreach ($root as $value) {
-            if ($value === '.' || $value === '..') continue;
             if (is_file($dir . SEP . $value)) {
                 $pathinfo = pathinfo($dir . SEP . $value);
                 if ($pathinfo['extension'] == 'php' && $file_name == $pathinfo['filename']) {
@@ -181,6 +182,7 @@
                 if($file) return $file;
             }
         }
+        closedir();
     }
 
     public function __destruct()
@@ -189,6 +191,10 @@
         spl_autoload_register(function ($className) use ($path) {
             if (file_exists(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
+
+            if (file_exists(CONTROLLER . SEP . "utils.php"))
+                require_once CONTROLLER . SEP . "utils.php";
+
             $className = str_replace("_Model", "", $className);
           
             $get_model = $this->get_model($className);

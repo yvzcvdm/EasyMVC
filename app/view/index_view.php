@@ -2,7 +2,7 @@
 
 
     <div id="container">
-        <img class="logo" src="/assets/img/logo.png" alt="Logo">
+        <img class="logo" src="<?= $app_root ?>assets/img/logo.png" alt="Logo">
         <h1><?= $title ?></h1>
 
         <ul>
@@ -23,7 +23,7 @@
         <div class="content">
             <div class="row">
                 <div class="col">
-                    <div class="user"><img src="/assets/upload/user.png" alt="Logo"></div>
+                    <div class="user"><img src="<?= $app_root ?>ssets/upload/user.png" alt="Logo"></div>
 
                     <form action="<?= $app_uri ?>?get_1=data_1&get_2=data_2" method="post">
                         <table>
