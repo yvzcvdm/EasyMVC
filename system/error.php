@@ -198,7 +198,7 @@ $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 
             </div>
             <h2><?php echo $codes[$code]?></h2>
             <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
-            <a href="<?php echo $domain ?>"><?=$_SERVER['HTTP_HOST']?></a>
+            <a href="<?php echo $domain ?>">Home Page</a>
         </div>
     </div>
 </body>
