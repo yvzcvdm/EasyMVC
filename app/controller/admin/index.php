@@ -1,4 +1,4 @@
-<? class index extends app
+<?php class index extends app
 {
     public function  __construct()
     {
@@ -8,6 +8,7 @@
     public function index($data)
     {
         $data["title"] = "Admin";
+        $data["text_code"] = init::random_text_code(10);
         view::html("index", $data);
     }
 

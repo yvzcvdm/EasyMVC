@@ -1,4 +1,4 @@
-<? class test_Model extends db
+<?php class test_Model extends db
 {
     public function test($test)
     {

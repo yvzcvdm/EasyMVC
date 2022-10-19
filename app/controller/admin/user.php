@@ -1,4 +1,4 @@
-<? class user extends app
+<?php class user extends app
 {
     public function  __construct()
     {

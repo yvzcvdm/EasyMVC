@@ -1,4 +1,4 @@
-<? class init extends db
+<?php class init extends db
 {
 	public function slug($str)
 	{

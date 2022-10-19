@@ -1,5 +1,5 @@
 <?php
-
+header('HTTP/1.0 404 Not Found', true, 404);
 $code = $_SERVER['REDIRECT_STATUS'];
 $codes = array(
     400 => "Bad Request",
@@ -65,7 +65,7 @@ GqNYJAgFDEpQAAAzmxafI4vZWwAAAABJRU5ErkJggg==" />
     <style>
         html,
         body {
-            background: #444;
+            background: #eee;
             color: #aaa;
         }
 

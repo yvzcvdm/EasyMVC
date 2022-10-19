@@ -1,13 +1,12 @@
-<? class db
+<?php class db
 {
 	public $db;
-	private $app_ini;
 
 	public function connect()
 	{
-		$app_ini = app::app_ini();
+		$config = $this->config;
 		try {
-			$this->db = new PDO("mysql:host=$app_ini[db_server];port=$app_ini[db_port];dbname=$app_ini[db_name]", $app_ini['db_user'], $app_ini['db_pass']);
+			$this->db = new PDO("mysql:host=$config[db_server];port=$config[db_port];dbname=$config[db_name]", $config['db_user'], $config['db_pass']);
 			$this->db->exec("set names utf8");
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		} catch (PDOException $e) {

@@ -1,4 +1,4 @@
-<? class view extends init
+<?php class view extends init
 {
     public function html($path, $data)
     {

@@ -1,4 +1,4 @@
-<? class SMTPMailer extends init
+<?php class SMTPMailer extends init
 {
     private $server = 'smtp.yandex.com';
     private $port   =  465;
