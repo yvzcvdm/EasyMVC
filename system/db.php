@@ -1,23 +1,22 @@
-<?php class db
+<?php class db extends app
 {
 	public $db;
 
-	public function connect()
+	public function __construct()
 	{
-		$config = $this->config;
+
+		$config = $this->get_config();
+		$this->db = null;
+
 		try {
 			$this->db = new PDO("mysql:host=$config[db_server];port=$config[db_port];dbname=$config[db_name]", $config['db_user'], $config['db_pass']);
 			$this->db->exec("set names utf8");
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		} catch (PDOException $e) {
-			echo "Veritabanı bağlantı hatası!";
-			exit;
+			die("Veritabanı bağlantı hatası!");
 		}
 	}
 
-	public function test($test){
-		return $test;
-	}
 	public function proc($param)
 	{
 		$stmt = $this->db->prepare($param);
@@ -30,7 +29,7 @@
 		return $this->data_export_key($stmt);
 	}
 
-	public function data_export_key($stmt)
+	private function data_export_key($stmt)
 	{
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -38,7 +37,7 @@
 		return $result;
 	}
 
-	public function data_export($stmt)
+	private function data_export($stmt)
 	{
 		$stmt->execute();
 		$result["column"] = $this->columnList($stmt);
@@ -50,7 +49,7 @@
 		return $result;
 	}
 
-	public function columnList($stmt)
+	private function columnList($stmt)
 	{
 		for ($i = 0; $i < $stmt->columnCount(); $i++) {
 			$col = $stmt->getColumnMeta($i);

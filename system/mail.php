@@ -1,4 +1,4 @@
-<?php class SMTPMailer extends init
+<?php class mail
 {
     private $server = 'smtp.yandex.com';
     private $port   =  465;
@@ -25,9 +25,7 @@
 
     public function __construct($server = false, $port = false, $secure = false)
     {
-        $app_ini = app::app_ini();
 
-        var_dump($app_ini);
         if (isset($app_ini["email"])) {
             $this->server   = $server;
             $this->username = '';

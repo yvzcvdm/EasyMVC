@@ -129,7 +129,7 @@
         return init::array_clear(array_filter($param));
     }
 
-    private function get_config()
+    public function get_config()
     {
         $data = parse_ini_file(ROOT . SEP . 'app.ini');
         return ($data) ? $data : false;
