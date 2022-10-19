@@ -11,7 +11,7 @@
         if (file_exists(VIEW . '/' . $path . '_view.php'))
             require VIEW . '/' . $path . '_view.php';
         else
-            http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
+            print("View file not found!.\n");
         ob_end_flush();
         $view = ob_get_contents();
         return $view;
@@ -32,7 +32,7 @@
         if (file_exists(VIEW . '/' . $path . '_view.php'))
             require VIEW . '/' . $path . '_view.php';
         else
-            http_response_code(404) . die("404 Sayfa Bulunamadı.\n");
+            print("View file not found!.\n");
 
         if (file_exists(LAYOUT . SEP . 'header.php'))
             require LAYOUT . SEP . 'header.php';
