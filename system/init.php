@@ -129,12 +129,12 @@
 
 	public function send_mail($email, $subject, $content)
 	{
-		// error_reporting(0);
-		// $mail = new mail();
-		// $mail->addTo($email);
-		// $mail->Subject($subject);
-		// $mail->Body('<h3>' . $subject . '</h3><p>' . $content . '</p>');
-		// return $mail->Send() ? true : false;
+		error_reporting(0);
+		$mail = new mail();
+		$mail->addTo($email);
+		$mail->Subject($subject);
+		$mail->Body('<h3>' . $subject . '</h3><p>' . $content . '</p>');
+		return $mail->Send() ? true : false;
 	}
 
 	public function message($type, $content)

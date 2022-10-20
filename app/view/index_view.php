@@ -23,7 +23,7 @@
         <div class="content">
             <div class="row">
                 <div class="col">
-                    <div class="user"><img src="<?= $app_root ?>ssets/upload/user.png" alt="Logo"></div>
+                    <div class="user"><img src="<?= $app_root ?>assets/upload/user.png" alt="Logo"></div>
 
                     <form action="<?= $app_uri ?>?get_1=data_1&get_2=data_2" method="post">
                         <table>
@@ -78,5 +78,5 @@
 
         </div>
 
-        <div class="content"><? highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>"); ?></div>
+        <div class="content"><? highlight_string("<?php " . var_export($data, true) . "; ?>"); ?></div>
     </div>

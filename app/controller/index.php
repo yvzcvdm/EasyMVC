@@ -4,6 +4,7 @@
     {
         $this->index_Model = new index_Model();
         $this->test_Model = new test_Model();
+        $this->yavuz_Model = new yavuz_Model();
     }
 
     public function index($data)
