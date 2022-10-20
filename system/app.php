@@ -9,6 +9,8 @@
     private $method;
     private $error;
     public $config;
+    public $utils;
+    public $app_params;
 
     public function __construct()
     {
@@ -19,6 +21,7 @@
         $this->path = $this->get_path();
         $this->file = $this->get_file();
         $this->func = $this->get_function();
+        $this->app_params = utils::export();
         $this->params = $this->get_param();
     }
 
@@ -116,6 +119,7 @@
         $param["app_root"] = $this->root;
         $param["app_path"] = $this->path;
         $param["app_file"] = $this->file;
+        $param["app_params"] = $this->app_params;
         $param["app_function"] = $this->func;
         $param["app_uri"] = $this->uri;
         $param["app_post"] = $_POST;
@@ -123,10 +127,15 @@
         $param["app_cookie"] = $_COOKIE;
         $param["app_session"] = $_SESSION;
         $param["app_files"] = $_FILES;
+        $param["app_raw"] = $this->get_input_raw();
+        return init::array_clear(array_filter($param));
+    }
+
+    public function get_input_raw()
+    {
         $input_raw = file_get_contents("php://input");
         $input_array = (array) json_decode($input_raw, true);
-        $param["app_raw"] = is_array($input_array) ? $input_array : $input_raw;
-        return init::array_clear(array_filter($param));
+        return is_array($input_array) ? $input_array : $input_raw;
     }
 
     public function get_config()
@@ -186,8 +195,10 @@
     {
         $path = $this->path;
         spl_autoload_register(function ($className) use ($path) {
+
             if (is_file(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
+
 
             $className = str_replace("_Model", "", $className);
 
@@ -195,12 +206,11 @@
 
             if (is_file($get_model))
                 require_once $get_model;
-
         });
 
-        
+
         if (class_exists($this->file)) {
-            $this->method = new $this->file($this);
+            $this->method = new $this->file($this->params);
             if (method_exists($this->method, $this->func)) {
                 call_user_func(array($this->method, $this->func), (array) $this->params);
                 $this->error = false;

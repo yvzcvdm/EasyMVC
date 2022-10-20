@@ -1,8 +1,8 @@
 <?php class user extends app
 {
-    public function  __construct()
+    public function __construct($data)
     {
-        $this->index_Model = new index_Model();
+
     }
 
     public function index($data)

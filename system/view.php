@@ -1,6 +1,5 @@
-<?php abstract class view extends init
+<?php class view extends init
 {
-
     private function sanitize_output($buffer)
     {
         $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');

@@ -1,4 +1,4 @@
-<?php class init
+<?php class init extends utils
 {
 	public function slug($str)
 	{
