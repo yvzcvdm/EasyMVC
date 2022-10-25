@@ -1,19 +1,16 @@
 # Redirection
 <IfModule mod_rewrite.c>
-    RewriteEngine On
-
-    # disable directory browsing
-    Options All -Indexes
-    Options +FollowSymLinks
-
-    # redirect index file
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^app/controller/ - [F,L]
-    RewriteRule ^app/ - [F,L]
-    RewriteRule ^system/ - [L,NC]
-    RewriteRule ^assets/ -  [L,NC]
-    RewriteRule ^ index.php [L,NC]
+  RewriteEngine on
+  RewriteRule ^ - [E=protossl]
+  RewriteCond %{HTTPS} on
+  RewriteRule ^ - [E=protossl:s]
+  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+  RewriteRule "/\.|^\.(?!well-known/)" - [F]
+  # index.php.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !=/favicon.ico
+  RewriteRule ^(.*)$ /index.php [L]
 </IfModule>
 
 # Protect file
