@@ -25,7 +25,6 @@
 
 	public function export()
 	{
-		var_dump($this->params);
 		$this->params["key_5"] = "Data 1";
 		return $this->params;
 	}
