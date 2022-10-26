@@ -9,7 +9,6 @@
     private $method;
     private $error;
     public $config;
-    public $utils;
     public $app_params;
 
     public function __construct()
@@ -21,7 +20,7 @@
         $this->path = $this->get_path();
         $this->file = $this->get_file();
         $this->func = $this->get_function();
-        $this->app_params = utils::export();
+        $this->app_params = array();
         $this->params = $this->get_param();
     }
 
