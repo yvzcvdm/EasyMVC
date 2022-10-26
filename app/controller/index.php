@@ -1,6 +1,6 @@
 <?php class index extends app
 {
-    public function __construct($data)
+    public function __construct()
     {
         $this->index_Model = new index_Model();
         $this->yavuz_Model = new yavuz_Model();
