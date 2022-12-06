@@ -9,6 +9,7 @@
             <li><a href="<?= $app_root ?>">Home</a></li>
             <li><a href="<?= $app_root ?>corporate/">Corporate</a></li>
             <li><a href="<?= $app_root ?>contact">Contact</a></li>
+            <li><a href="<?= $app_root ?>upload">Upload</a></li>
         </ul>
         <ul>
             <li><a href="<?= $app_root ?>admin/">Admin</a></li>

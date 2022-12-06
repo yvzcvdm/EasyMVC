@@ -112,8 +112,8 @@
 			}
 		}
 	}
-
-	public function clean_phone($phone)
+    
+    public function clean_phone($phone)
 	{
 		$phone = preg_replace('/\D+/', '', $phone);
 		$filtered_phone_number = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
