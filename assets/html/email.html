@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Oyna.co</title>
+    <title>{{site_title}}</title>
     <style>
         img {
             border: none;
@@ -322,9 +322,12 @@
             }
         }
 
-        .text-center {
+        .header {
             text-align: center;
+            font-weight: bold;
         }
+        .logo {margin:30px 0; display: block; text-align: center;}
+        .logo img {max-width:300px;}
     </style>
 </head>
 
@@ -335,13 +338,13 @@
             <td>&nbsp;</td>
             <td class="container">
                 <div class="content">
-                    <br><br>
-                    <img src="https://weebim.com/dosya/sistem/logo/logo.png" style="max-width:300px"
-                        alt="weebim.com"><br><br>
+                    <div class="logo">
+                        <img src="{{site_logo}}" alt="{{site_title}}">
+                    </div>
                     <table role="presentation" class="main">
                         <tr>
                             <td class="wrapper">
-                                <h3 class="text-center">{{subject}}</h3>
+                                <h3 class="header">{{subject}}</h3>
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td class="btn btn-primary">
@@ -356,16 +359,16 @@
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td class="content-block">
-                                    <span class="apple-link">Weebim.com e-posta bilgilendirme sistemi. Spam veya reklam
+                                    <span class="apple-link">{{site_title}} e-posta bilgilendirme sistemi. Spam veya reklam
                                         mesaj içermez.</span>
-                                    <br>Bize e-posta yoluyla yazın. <a href="mailto:destek@weebim.com" target="_blank"
-                                        title="İletişim e-posta adresi">destek@weebim.com</a>
+                                    <br>Bize e-posta yoluyla yazın. <a href="mailto:{{site_mail}}" target="_blank"
+                                        title="İletişim e-posta adresi">{{site_mail}}</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="content-block powered-by">
-                                    Powered by <a href="https://weebim.com" target="_blank"
-                                        title="Weebim.com">weebim.com</a>.
+                                    Powered by <a href="{{site_url}}" target="_blank"
+                                        title="{{site_domain}}">{{site_title}}</a>.
                                 </td>
                             </tr>
                         </table>

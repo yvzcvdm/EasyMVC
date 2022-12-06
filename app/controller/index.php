@@ -18,6 +18,7 @@
     public function corporate($data)
     {
         $data["title"] = "Corporate";
+        $this->send_mail("hakikatihak@gmail.com", "Deneme", "Deneme Mail mesajıdır");
         $data["text_code"] = init::random_text_code(2);
         view::layout("index", $data);
     }

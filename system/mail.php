@@ -1,10 +1,10 @@
 <?php class mail
 {
-    private $server = 'smtp.yandex.com';
-    private $port   =  465;
-    private $secure = 'ssl';
-    private $username = 'admin@weebim.com';
-    private $password = 'Weebim++33';
+    private $server = '';
+    private $port   =  0;
+    private $secure = '';
+    private $username = '';
+    private $password = '';
     public $to       = array();
     public $from     = array();
     public $cc       = array();
@@ -22,16 +22,16 @@
     private $hostname;
     private $local;
     private $log      = array();
+    private $config = array();
 
     public function __construct()
     {
-
-        $config = parse_ini_file(ROOT . SEP . 'app.ini');
-        $this->server = $config["mail_server"];
-        $this->username = $config["mail_user"];
-        $this->password = $config["mail_pass"];
-        $this->port = $config["mail_port"];
-        $this->secure = $config["mail_secure"];
+        $this->config = parse_ini_file(ROOT . SEP . 'app.ini');
+        $this->server = $this->config["mail_server"];
+        $this->username = $this->config["mail_user"];
+        $this->password = $this->config["mail_pass"];
+        $this->port = $this->config["mail_port"];
+        $this->secure = $this->config["mail_secure"];
 
         // Define connection hostname and localhost
         $this->hostname = $this->server;
@@ -95,6 +95,19 @@
     // Set email html body
     public function Body($html)
     {
+
+        $template = file_get_contents(ROOT . "/assets/html/email.html");
+
+        if ($template) {
+            $template = str_replace("{{subject}}", $this->subject, $template);
+            $template = str_replace("{{site_domain}}", $this->config["site_domain"], $template);
+            $template = str_replace("{{site_url}}", $this->config["site_url"], $template);
+            $template = str_replace("{{site_title}}", $this->config["site_title"], $template);
+            $template = str_replace("{{site_mail}}", $this->config["site_mail"], $template);
+            $template = str_replace("{{site_logo}}", $this->config["site_logo"], $template);
+            $html = str_replace("{{content}}", $html, $template);
+        }
+
         $this->body = $html;
     }
 
