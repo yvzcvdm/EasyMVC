@@ -59,7 +59,7 @@ $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?php echo $codes[$code]?></title>
+    <title><?php echo $codes[$code] ?></title>
 
     <style>
         * {
@@ -166,7 +166,7 @@ $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 
             border: none;
             border-radius: 40px;
             color: #333;
-            border:1px solid #000;
+            border: 1px solid #000;
             font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
@@ -177,7 +177,7 @@ $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 
 
         .notfound a:hover {
             background-color: #2c2c2c;
-            color:#fff;
+            color: #fff;
         }
     </style>
 
@@ -189,14 +189,14 @@ $domain = 'http' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 
 </head>
 
 <body>
-    
+
     <div id="notfound">
         <div class="notfound">
             <div class="notfound-404">
                 <div></div>
-                <h1><?php echo ($code == 200 || empty($code))?404:$code ?></h1>
+                <h1><?php echo ($code == 200 || empty($code)) ? 404 : $code ?></h1>
             </div>
-            <h2><?php echo $codes[$code]?></h2>
+            <h2><?php echo $codes[$code] ?></h2>
             <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
             <a href="<?php echo $domain ?>">Home Page</a>
         </div>
