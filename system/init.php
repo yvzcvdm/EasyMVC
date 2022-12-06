@@ -129,11 +129,16 @@
 
 	public function send_mail($email, $subject, $content)
 	{
+        $mailFile = file_get_contents(ROOT . "/assets/html/email.html");
+        $mailFile = str_replace("{{subject}}", $subject, $mailFile);
+        $mailFile = str_replace("{{content}}", $content, $mailFile);
+
 		error_reporting(0);
 		$mail = new mail();
+        $mail->from("admin@weebim.com", "Weebim");
 		$mail->addTo($email);
 		$mail->Subject($subject);
-		$mail->Body('<h3>' . $subject . '</h3><p>' . $content . '</p>');
+		$mail->Body($mailFile);
 		return $mail->Send() ? true : false;
 	}
 

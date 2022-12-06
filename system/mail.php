@@ -23,22 +23,15 @@
     private $local;
     private $log      = array();
 
-    public function __construct($server = false, $port = false, $secure = false)
+    public function __construct()
     {
 
-        if (isset($app_ini["email"])) {
-            $this->server   = $server;
-            $this->username = '';
-            $this->password = '';
-        }
-
-        if ($server !== false) {
-            $this->server   = $server;
-            $this->username = '';
-            $this->password = '';
-        }
-        if ($port   !== false) $this->port   = $port;
-        if ($secure !== false) $this->secure = $secure;
+        $config = parse_ini_file(ROOT . SEP . 'app.ini');
+        $this->server = $config["mail_server"];
+        $this->username = $config["mail_user"];
+        $this->password = $config["mail_pass"];
+        $this->port = $config["mail_port"];
+        $this->secure = $config["mail_secure"];
 
         // Define connection hostname and localhost
         $this->hostname = $this->server;

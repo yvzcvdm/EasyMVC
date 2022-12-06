@@ -1,10 +1,10 @@
 <?php
 
 session_start();
-// ini_set("log_errors", 1);
-// ini_set("error_log", "error.log");
-// error_reporting(0);
-// date_default_timezone_set('Europe/Istanbul');
+ini_set("log_errors", 1);
+ini_set("error_log", "error.log");
+error_reporting(0);
+date_default_timezone_set('Europe/Istanbul');
 
 DEFINE("ROOT", __DIR__);
 DEFINE("SEP", DIRECTORY_SEPARATOR);

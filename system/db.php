@@ -1,13 +1,12 @@
-<?php class db extends app
+<?php class db
 {
 	public $db;
 
 	public function __construct()
 	{
 
-		$config = $this->get_config();
+		$config = parse_ini_file(ROOT . SEP . 'app.ini');
 		$this->db = null;
-
 		try {
 			$this->db = new PDO("mysql:host=$config[db_server];port=$config[db_port];dbname=$config[db_name]", $config['db_user'], $config['db_pass']);
 			$this->db->exec("set names utf8");

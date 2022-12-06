@@ -204,10 +204,6 @@
                 require_once $get_model;
         });
 
-        if (class_exists("autoload")) {
-            new autoload($this->params);
-        }
-        
         if (class_exists($this->file)) {
             $this->method = new $this->file($this->params);
             if (method_exists($this->method, $this->func)) {
