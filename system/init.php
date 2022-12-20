@@ -14,6 +14,17 @@
 		return $str;
 	}
 
+    function text_short($text, $chars_limit)
+	{
+		if (strlen($text) > $chars_limit) {
+			$new_text = substr($text, 0, $chars_limit);
+			$new_text = trim($new_text);
+			return $new_text . "...";
+		} else {
+			return $text;
+		}
+	}
+
 	public function array_clear($array)
 	{
 		array_walk_recursive($array, function (&$item) {
