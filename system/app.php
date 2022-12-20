@@ -74,6 +74,20 @@
 
     private function get_function()
     {
+
+        $path = $this->path;
+        spl_autoload_register(function ($className) use ($path) {
+
+            if (is_file(CONTROLLER . $path . $className . ".php"))
+                require_once CONTROLLER . $path . $className . ".php";
+
+            $className = str_replace("_Model", "", $className);
+            $get_model = $this->get_model($className);
+            if (is_file($get_model))
+                require_once $get_model;
+        });
+
+
         $url_path = $this->root . $this->path;
         $url_path = str_replace("\\", "/", $url_path);
         $url_path = preg_replace('/(\/+)/', '/', $url_path);
@@ -240,18 +254,6 @@
 
     public function __destruct()
     {
-        $path = $this->path;
-        spl_autoload_register(function ($className) use ($path) {
-
-            if (is_file(CONTROLLER . $path . $className . ".php"))
-                require_once CONTROLLER . $path . $className . ".php";
-
-            $className = str_replace("_Model", "", $className);
-            $get_model = $this->get_model($className);
-            if (is_file($get_model))
-                require_once $get_model;
-        });
-
         if (class_exists($this->file)) {
             $this->method = new $this->file($this->params);
             if (method_exists($this->method, $this->func)) {
