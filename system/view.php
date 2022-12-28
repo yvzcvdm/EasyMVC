@@ -46,8 +46,8 @@
         else
             print("View file not found!.\n");
 
-        if (file_exists(LAYOUT . SEP . 'header.php'))
-            require LAYOUT . SEP . 'header.php';
+        if (file_exists(LAYOUT . SEP . 'footer.php'))
+            require LAYOUT . SEP . 'footer.php';
         ob_end_flush();
         $view = ob_get_contents();
         return $view;

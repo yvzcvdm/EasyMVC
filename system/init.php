@@ -1,5 +1,6 @@
 <?php class init
 {
+    
 	public function slug($str)
 	{
 		$tr = array('ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç');

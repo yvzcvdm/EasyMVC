@@ -2,12 +2,13 @@
 {
     public function __construct($data)
     {
-    
+        $this->index_Model = new index_Model();
     }
 
     public function index($data)
     {
         $data["title"] = "Admin";
+        $data["user_list"] = $this->index_Model->index();
         $data["text_code"] = init::random_text_code(1);
         view::layout("index", $data);
     }
