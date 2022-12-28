@@ -149,7 +149,7 @@
 		return $mail->Send() ? true : false;
 	}
 
-	public function message($type, $content)
+	public function show_message($type, $content)
 	{
 		if ($type == 'primary')
 			$export = '<div class="alert shake alert-icon alert-primary" role="alert"><i class="fe fe-bell mr-2" aria-hidden="true"></i>' . $content . '</div>';
