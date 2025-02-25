@@ -1,6 +1,6 @@
 # EasyMVC
 
-WeebimMVC, PHP tabanlı, hafif ve özelleştirilebilir bir Model-View-Controller (MVC) framework'üdür. Küçük ve orta ölçekli web projeleri için hızlı geliştirme imkanı sunar.
+EasyMVC, PHP tabanlı, hafif ve özelleştirilebilir bir Model-View-Controller (MVC) framework'üdür. Küçük ve orta ölçekli web projeleri için hızlı geliştirme imkanı sunar.
 
 ## Özellikler
 
