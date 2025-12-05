@@ -2,7 +2,7 @@
 
 **EasyMVC**, Pure PHP ile yazılmış, minimum kod footprint'i ile maksimum verimlilik sağlayan, ultra-hafif ve modüler bir **Model-View-Controller (MVC)** framework'üdür. 
 
-Dependency ve karmaşık yapılardan uzak, tamamen PHP Core üzerine inşa edilmiş, küçük ve orta ölçekli web projeleri için **hızlı geliştirme** ve **kolay bakım** imkanı sunar.
+Dependency ve karmaşık yapılardan uzak, tamamen PHP Core üzerine inşa edilmiş, büyük ölçekli web projeleri için **hızlı geliştirme** ve **kolay bakım** imkanı sunar.
 
 ---
 
@@ -155,8 +155,8 @@ $app = [
     "session"   => $_SESSION,                  // Session verileri
     "files"     => $_FILES,                    // Upload files
     "raw"       => $raw_input,                 // Raw JSON input
-    "app_uri_0" => "detail",                   // URI parametresi 1
-    "app_uri_1" => "5",                        // URI parametresi 2
+    "uri_0" => "detail",                       // URI parametresi 1
+    "uri_1" => "5",                            // URI parametresi 2
 ];
 ```
 
@@ -520,7 +520,7 @@ class blog
     
     public function post($data)
     {
-        $post_id = $data["app_uri_0"] ?? 1;
+        $post_id = $data["uri_0"] ?? 1;
         $data["title"] = "Blog Yazısı #" . $post_id;
         view::layout("blog_post", $data);
     }
@@ -599,12 +599,12 @@ app/controller/blog.php → index()
 http://example.com/blog/post/5
   ↓
 app/controller/blog.php → post()
-$data["app_uri_0"] = "5"
+$data["uri_0"] = "5"
 
 http://example.com/admin/user/edit/10
   ↓
 app/controller/admin/user.php → edit()
-$data["app_uri_0"] = "10"
+$data["uri_0"] = "10"
 ```
 
 ---
@@ -616,9 +616,9 @@ $data["app_uri_0"] = "10"
 ```php
 public function contact($data)
 {
-    if (isset($data["app_post"]["submit"])) {
-        $email = $data["app_post"]["email"] ?? "";
-        $message = $data["app_post"]["message"] ?? "";
+    if (isset($data["post"]["submit"])) {
+        $email = $data["post"]["email"] ?? "";
+        $message = $data["post"]["message"] ?? "";
         
         // Doğrulama
         if (!init::valid_email($email)) {
