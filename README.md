@@ -259,19 +259,11 @@ Framework minimal gelmesine rağmen, ihtiyacınız olan core dosyaları ekleyebi
 └── mail.php             → SMTP e-posta gönderimi
 ```
 
-**Örnek - Veritabanı Seçimi:**
-```php
-// Sadece ihtiyacınız olanı yükleyin
-require_once "core/mysql.php";      // MySQL kullanılacaksa
-// veya
-require_once "core/postgresql.php"; // PostgreSQL kullanılacaksa
-```
-
 ---
 
 ### 9. **PDO Tabanlı Veritabanı Yönetimi**
 
-Tüm veritabanı sınıfları PDO kullanır (Secure, prepared statements):
+Tüm veritabanı sınıfları PDO kullanır (Secure, prepared statements). `proc()` metodu ile SQL sorgularını çalıştırırsınız:
 
 ```php
 <?php
@@ -282,17 +274,97 @@ class blog_Model extends mysql  // veya postgres, sqlite
         parent::__construct();
     }
     
+    // SELECT - Tüm kayıtları getir
     public function get_posts()
     {
         return $this->proc("SELECT * FROM posts ORDER BY date DESC");
+        // Sonuç: ["success" => true, "data" => [...]]
     }
     
+    // SELECT - Tekil kayıt getir
     public function get_post($id)
     {
         $id = intval($id);
         return $this->proc("SELECT * FROM posts WHERE id = $id");
+        // Sonuç: ["success" => true, "data" => [{...}]]
+    }
+    
+    // INSERT - Yeni kayıt ekle
+    public function create_post($title, $content, $author)
+    {
+        $title = trim($title);
+        $content = trim($content);
+        $author = trim($author);
+        
+        $query = "INSERT INTO posts (title, content, author, date) VALUES ('$title', '$content', '$author', NOW())";
+        return $this->proc($query);
+        // Sonuç: ["success" => true/false, "insert_id" => 123]
+    }
+    
+    // UPDATE - Kaydı güncelle
+    public function update_post($id, $title, $content)
+    {
+        $id = intval($id);
+        $title = trim($title);
+        $content = trim($content);
+        
+        $query = "UPDATE posts SET title='$title', content='$content' WHERE id=$id";
+        return $this->proc($query);
+        // Sonuç: ["success" => true/false]
+    }
+    
+    // DELETE - Kaydı sil
+    public function delete_post($id)
+    {
+        $id = intval($id);
+        return $this->proc("DELETE FROM posts WHERE id=$id");
+        // Sonuç: ["success" => true/false]
+    }
+    
+    // Parametreli Sorgu (Güvenli)
+    public function search_posts($keyword)
+    {
+        $keyword = '%' . $keyword . '%';
+        return $this->proc("SELECT * FROM posts WHERE title LIKE '$keyword' OR content LIKE '$keyword'");
     }
 }
+```
+
+**Controller'de Kullanım:**
+```php
+public function blog($data)
+{
+    $blog = new blog_Model();
+    
+    // Tüm yazıları getir
+    $result = $blog->get_posts();
+    if ($result['success']) {
+        $data['posts'] = $result['data'];
+    }
+    
+    // Yeni yazı oluştur
+    if (isset($data['app']['post']['submit'])) {
+        $title = $data['app']['post']['title'];
+        $content = $data['app']['post']['content'];
+        $author = $data['app']['post']['author'];
+        
+        $result = $blog->create_post($title, $content, $author);
+        $data['message'] = $result['success'] ? 'Yazı eklendi!' : 'Hata!';
+    }
+    
+    view::layout('blog', $data);
+}
+```
+
+**Proc Metodu Sonuç Formatı:**
+```php
+[
+    'success'   => true/false,      // İşlem başarılı mı?
+    'data'      => [...],           // SELECT sonuçları (varsa)
+    'insert_id' => 123,             // INSERT'te yeni ID (varsa)
+    'rows'      => 5,               // Etkilenen satır sayısı
+    'error'     => 'Hata mesajı'    // Hata varsa
+]
 ```
 
 ---
