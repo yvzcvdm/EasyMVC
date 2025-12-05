@@ -44,7 +44,7 @@
 	{
 		$characters = array();
 		$characters = array_merge(range(0, 9), range('a', 'z'), range('A', 'Z'));
-		srand((float)microtime() * 100000);
+		srand((int)((float)microtime() * 100000));
 		shuffle($characters);
 		$result = '';
 		for ($i = 0; $i < $length; $i++) {

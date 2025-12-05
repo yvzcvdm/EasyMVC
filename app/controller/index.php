@@ -2,8 +2,7 @@
 {
     public function __construct()
     {
-        $this->index_Model = new index_Model();
-        $this->yavuz_Model = new yavuz_Model();
+        
     }
 
     public function index($data)
@@ -11,7 +10,6 @@
 
         $data["title"] = "Home";
         $data["text_code"] = init::random_text_code(10);
-        $data["user_list"] = $this->index_Model->index();
         view::layout("index", $data);
     }
 

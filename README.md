@@ -152,7 +152,7 @@ View dosyalarınızı `app/view/` dizini altında oluşturun:
                     <div class="card-body">
                         <h5 class="card-title"><?= $post["title"] ?></h5>
                         <p class="card-text"><?= text_short($post["content"], 150) ?></p>
-                        <a href="<?= $app_root ?>blog/detail/<?= $post["id"] ?>" class="btn btn-primary">Devamını Oku</a>
+                        <a href="<?= $app["root"] ?>blog/detail/<?= $post["id"] ?>" class="btn btn-primary">Devamını Oku</a>
                     </div>
                 </div>
             </div>

@@ -10,9 +10,9 @@
 
     public function html($path, $data)
     {
-        if (isset($data["app_get"]["view_json"]))
+        if (isset($data["app"]["get"]["view_json"]))
             return $this->json($data) . die();
-        elseif (isset($data["app_get"]["view_layout"]))
+        elseif (isset($data["app"]["get"]["view_layout"]))
             return $this->layout($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
@@ -30,9 +30,9 @@
 
     public function layout($path, $data)
     {
-        if (isset($data["app_get"]["view_json"]))
+        if (isset($data["app"]["get"]["view_json"]))
             return $this->json($data) . die();
-        elseif (isset($data["app_get"]["view_html"]))
+        elseif (isset($data["app"]["get"]["view_html"]))
             return $this->html($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
