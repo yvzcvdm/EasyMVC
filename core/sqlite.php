@@ -1,27 +1,36 @@
-<?php class mysql
+<?php class sqlite
 {
-	public $mysql;
+	public $sqlite;
 	private static $instance = null;
 
 	public function __construct()
 	{
 		if (self::$instance === null) {
 			$config = parse_ini_file(ROOT . SEP . 'app.ini');
-			$db_config = isset($config['mysql']) ? array_merge($config, $config['mysql']) : $config;
+			$db_config = isset($config['sqlite']) ? array_merge($config, $config['sqlite']) : $config;
+			
+			// SQLite database path
+			$db_dir = ROOT . SEP . 'database';
+			if (!is_dir($db_dir)) {
+				mkdir($db_dir, 0755, true);
+			}
+			
+			$db_path = $db_dir . SEP . ($db_config['db_name'] ?? 'app') . '.db';
+			
 			try {
-				$this->mysql = new PDO(
-					"mysql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];charset=utf8mb4",
-					$db_config['db_user'],
-					$db_config['db_pass'],
+				$this->sqlite = new PDO(
+					"sqlite:" . $db_path,
+					null,
+					null,
 					[
 						PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
 						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 					]
 				);
-				$this->mysql->exec("SET NAMES utf8mb4");
+				$this->sqlite->exec("PRAGMA foreign_keys = ON");
 				self::$instance = $this;
 			} catch (PDOException $e) {
-				// die("Veritabanı bağlantı hatası: " . $e->getMessage());	
+				// error_log("SQLite bağlantı hatası: " . $e->getMessage());	
 			}
 		}
 	}
@@ -36,7 +45,7 @@
 
 	public function query($sql, $params = [])
 	{
-		$stmt = $this->mysql->prepare($sql);
+		$stmt = $this->sqlite->prepare($sql);
 		$stmt->execute($params);
 
 		return [
@@ -50,7 +59,7 @@
 
 	public function execute($sql, $params = [])
 	{
-		$stmt = $this->mysql->prepare($sql);
+		$stmt = $this->sqlite->prepare($sql);
 		return $stmt->execute($params);
 	}
 
