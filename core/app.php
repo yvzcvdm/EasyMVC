@@ -42,12 +42,12 @@
 
     private function get_path()
     {
-        $url_path = explode($this->root, $this->uri);
+        $url_path = explode($this->root, $this->uri ?? '');
         $url_path = array_filter($url_path);
         $url_path = array_values($url_path);
         if (count($url_path) < 2) {
             $url_path = array_shift($url_path);
-            $url_path = explode("/", $url_path);
+            $url_path = explode("/", $url_path ?? '');
             $url_path = array_filter($url_path);
         }
         $url_path = $this->is_path($url_path);
@@ -61,10 +61,10 @@
         $url_path = $this->root . $this->path;
         $url_path = str_replace("\\", "/", $url_path);
         $url_path = preg_replace('/(\/+)/', '/', $url_path);
-        $url_path = explode($url_path, $this->uri);
+        $url_path = explode($url_path, $this->uri ?? '');
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
-        $url_path = explode("/", $url_path);
+        $url_path = explode("/", $url_path ?? '');
         $file = array_filter($url_path);
         $file = array_shift($file);
         $file = $this->slug($file);
@@ -77,13 +77,13 @@
 
         $path = $this->path;
         spl_autoload_register(function ($className) use ($path) {
-
-            if (is_file(CONTROLLER . $path . $className . ".php"))
+            require_once CORE . SEP . 'mysql.php';
+            if ($className && is_file(CONTROLLER . $path . $className . ".php"))
                 require_once CONTROLLER . $path . $className . ".php";
 
             $className = str_replace("_Model", "", $className);
             $get_model = $this->get_model($className);
-            if (is_file($get_model))
+            if ($get_model && is_file($get_model))
                 require_once $get_model;
         });
 
@@ -96,7 +96,7 @@
         $url_path = explode($url_path, $this->uri);
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
-        $url_path = explode("/", $url_path);
+        $url_path = explode("/", $url_path ?? '');
         $url_path = array_filter($url_path);
         $url_path = array_shift($url_path);
         if (class_exists($this->file)) {
@@ -203,55 +203,7 @@
             }
         }
     }
-
-    public function upload_img($pdir)
-    {
-        $dir = ROOT . $pdir;
-        $result = array();
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-
-        if ($_FILES) {
-            foreach ($_FILES as $k => $files) {
-                if (is_array($files['name'])) {
-                    //Multifiles upload
-                    $countfiles = count($files['name']);
-                    for ($i = 0; $i < $countfiles; $i++) {
-
-                        $tmp_file = $files['tmp_name'][$i];
-                        $mime_type = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
-                        $file_type = $files['type'][$i];
-                        $file_size = $files['size'][$i];
-                        $filename = basename($files['name'][$i], '.' . $mime_type);
-                        $send_path = $dir . basename($filename . '-' . time() . $i . '.' . $mime_type);
-
-                        if (in_array($file_type, $allowedMimeTypes) && $file_size < 1000000) {
-                            $uploading = move_uploaded_file($tmp_file, $send_path);
-                            if ($uploading) {
-                                $result[$k][$i] = $pdir . basename($filename . '-' . time() . $i . '.' . $mime_type);
-                            }
-                        }
-                    }
-                } else {
-                    //Simple file upload
-                    $tmp_file = $files['tmp_name'];
-                    $mime_type = pathinfo($files['name'], PATHINFO_EXTENSION);
-                    $file_type = $files['type'];
-                    $file_size = $files['size'];
-                    $filename = basename($files['name'], '.' . $mime_type);
-                    $send_path = $dir . basename($filename . '-' . time() . '.' . $mime_type);
-
-                    if (in_array($file_type, $allowedMimeTypes) && $file_size < 1000000) {
-                        $uploading = move_uploaded_file($tmp_file, $send_path);
-                        if ($uploading) {
-                            $result[$k] = $pdir . basename($filename . '-' . time() . '.' . $mime_type);
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
+    
     public function __destruct()
     {
         if (class_exists($this->file)) {
@@ -263,7 +215,7 @@
         }
 
         if ($this->error) {
-            require_once SYSTEM . SEP . "error.php";
+            require_once CORE . SEP . "error.php";
         }
     }
 }

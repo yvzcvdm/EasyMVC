@@ -3,6 +3,7 @@
     
 	public function slug($str)
 	{
+		$str = $str ?? '';
 		$tr = array('ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç');
 		$eng = array('s', 's', 'i', 'i', 'g', 'g', 'u', 'u', 'o', 'o', 'c', 'c');
 		$str = str_replace($tr, $eng, $str);
