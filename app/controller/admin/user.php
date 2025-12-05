@@ -1,4 +1,4 @@
-<?php class user extends app
+<?php class user
 {
     public function __construct()
     {
@@ -8,7 +8,6 @@
     public function index($data)
     {
         $data["title"] = "User List";
-
         $data["text_code"] = init::random_text_code(10);
         view::layout("index", $data);
     }

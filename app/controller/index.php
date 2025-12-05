@@ -1,8 +1,9 @@
-<?php class index extends app
+<?php class index
 {
+    private $file;
     public function __construct()
     {
-        
+        $this->file = new File();
     }
 
     public function index($data)
@@ -30,8 +31,9 @@
     public function upload($data)
     {
         $data["title"] = "Upload";
-        $data["list_upload"] = $this->upload_img("/assets/upload/yavuz/");
-
+        $result = $this->file->upload("file_input[]", "/public/uploads/yavuz/");
+        $data["list_upload"] = $result['uploads'];
+        $data["errors"] = $result['errors'];
         view::layout("upload", $data);
     }
 }

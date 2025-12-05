@@ -1,4 +1,4 @@
-<?php class index extends app
+<?php class index
 {
     public function __construct($data)
     {

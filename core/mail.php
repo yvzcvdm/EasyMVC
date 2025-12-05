@@ -96,7 +96,7 @@
     public function Body($html)
     {
 
-        $template = file_get_contents(ROOT . "/assets/html/email.html");
+        $template = file_get_contents(ROOT . "/public/templates/email.html");
 
         if ($template) {
             $template = str_replace("{{subject}}", $this->subject, $template);
