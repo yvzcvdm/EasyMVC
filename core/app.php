@@ -74,6 +74,11 @@ class app extends view
         $file = array_shift($file) ?? 'index';
         $file = $this->slug($file);
         
+        // Validate filename format
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $file)) {
+            return 'index';
+        }
+        
         $controller_file = CONTROLLER . $this->path . $file . '.php';
         return file_exists($controller_file) ? $file : 'index';
     }
@@ -94,6 +99,11 @@ class app extends view
         $func = explode("/", $func);
         $func = array_filter($func);
         $func = array_shift($func) ?? 'index';
+        
+        // Validate function name format
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $func)) {
+            $func = 'index';
+        }
         
         if ($this->file && class_exists($this->file)) {
             $this->method = new $this->file($this);
@@ -162,8 +172,13 @@ class app extends view
 
     public function get_config()
     {
-        $data = parse_ini_file(ROOT . SEP . 'app.ini');
-        return ($data) ? $data : false;
+        $config_file = ROOT . SEP . 'app.ini';
+        if (!is_file($config_file)) {
+            return false;
+        }
+        
+        $data = parse_ini_file($config_file);
+        return is_array($data) ? $data : false;
     }
 
     private function is_path($path = null)
@@ -246,6 +261,11 @@ class app extends view
 
         $path = $this->path;
         spl_autoload_register(function ($className) use ($path) {
+            // Validate class name format
+            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $className)) {
+                return;
+            }
+            
             // Load Controller
             $controller_file = CONTROLLER . $path . $className . ".php";
             if (is_file($controller_file)) {

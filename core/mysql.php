@@ -20,7 +20,7 @@
 				$this->mysql->exec("SET NAMES utf8mb4");
 				self::$instance = $this;
 			} catch (PDOException $e) {
-				die("Veritabanı bağlantı hatası: " . $e->getMessage());
+				// die("Veritabanı bağlantı hatası: " . $e->getMessage());	
 			}
 		}
 	}

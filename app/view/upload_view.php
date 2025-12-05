@@ -51,5 +51,5 @@
         </div>
 
     </div>
-    <div class="content"><? highlight_string("<?php " . var_export($list_upload, true) . "; ?>"); ?></div>
+    <div class="content"><?php highlight_string("<?php " . var_export($list_upload, true) . "; ?>"); ?></div>
 </div>
