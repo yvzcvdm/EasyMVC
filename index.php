@@ -17,8 +17,22 @@ DEFINE("LAYOUT", APP . SEP . "layout");
 DEFINE("APPINI", ROOT . SEP . 'app.ini');
 
 spl_autoload_register(function ($className) {
-    if (file_exists(CORE . SEP . $className . ".php"))
+    // CORE klasöründen yükle
+    if (file_exists(CORE . SEP . $className . ".php")) {
         require_once CORE . SEP . $className . ".php";
+        return;
+    }
+    
+    // CONTROLLER ve MODEL için de çalışsın (opsiyonel)
+    if (file_exists(CONTROLLER . SEP . $className . ".php")) {
+        require_once CONTROLLER . SEP . $className . ".php";
+        return;
+    }
+    
+    if (file_exists(MODEL . SEP . $className . ".php")) {
+        require_once MODEL . SEP . $className . ".php";
+    }
 });
+
 
 new app();

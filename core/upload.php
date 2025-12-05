@@ -1,4 +1,4 @@
-<?php class view extends init
+<?php class upload
 {
     public function upload_img($pdir)
     {

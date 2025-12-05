@@ -1,6 +1,6 @@
 <?php
 
-class app extends view
+class app
 {
     private $root;
     private $path;
@@ -10,7 +10,6 @@ class app extends view
     private $uri;
     private $method;
     private $error;
-    private static $autoload_registered = false;
     public $config;
 
     public function __construct()
@@ -23,7 +22,7 @@ class app extends view
         $this->file = $this->get_file();
         $this->func = $this->get_function();
         $this->params = $this->get_param();
-        $this->register_autoload();
+
     }
 
     private function get_root()
@@ -72,7 +71,7 @@ class app extends view
         $file = explode("/", $file);
         $file = array_filter($file);
         $file = array_shift($file) ?? 'index';
-        $file = $this->slug($file);
+        $file = init::slug($file);
         
         // Validate filename format
         if (!preg_match('/^[a-zA-Z0-9_-]+$/', $file)) {
@@ -110,7 +109,7 @@ class app extends view
             $func = (method_exists($this->method, $func)) ? $func : "index";
         }
         
-        return $this->slug($func);
+        return init::slug($func);
     }
 
     private function get_param($param = [])
@@ -137,7 +136,7 @@ class app extends view
         $param = array_merge($param, $this->uri_get($parts));
         $param = array_merge($param, $this->input());
         
-        return $this->array_clear($param);
+        return init::array_clear($param);
     }
 
     private function input()
@@ -251,37 +250,6 @@ class app extends view
         }
         
         return false;
-    }
-
-    private function register_autoload()
-    {
-        if (self::$autoload_registered) {
-            return;
-        }
-
-        $path = $this->path;
-        spl_autoload_register(function ($className) use ($path) {
-            // Validate class name format
-            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $className)) {
-                return;
-            }
-            
-            // Load Controller
-            $controller_file = CONTROLLER . $path . $className . ".php";
-            if (is_file($controller_file)) {
-                require_once $controller_file;
-                return;
-            }
-
-            // Load Model
-            $model_name = str_replace("_Model", "", $className);
-            $model_file = $this->get_model($model_name);
-            if ($model_file && is_file($model_file)) {
-                require_once $model_file;
-            }
-        });
-
-        self::$autoload_registered = true;
     }
     
     public function __destruct()

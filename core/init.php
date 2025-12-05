@@ -1,7 +1,7 @@
 <?php class init
 {
     
-	public function slug($str)
+	public static function slug($str)
 	{
 		$str = $str ?? '';
 		$tr = array('ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç');
@@ -27,7 +27,7 @@
 		}
 	}
 
-	public function array_clear($array)
+	public static function array_clear($array)
 	{
 		array_walk_recursive($array, function (&$item) {
 			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
@@ -35,12 +35,12 @@
 		return $array;
 	}
 
-	public function random_number_code($length = 4)
+	public static function random_number_code($length = 4)
 	{
 		return strrev(substr(rand(1111, 999999), 0, $length));
 	}
 
-	public function random_text_code($length = 4)
+	public static function random_text_code($length = 4)
 	{
 		$characters = array();
 		$characters = array_merge(range(0, 9), range('a', 'z'), range('A', 'Z'));
@@ -54,7 +54,7 @@
 		return $result;
 	}
 
-	public function days_left($date)
+	public static function days_left($date)
 	{
 		$coming = new DateTime($date);
 		$now = new DateTime(date('d-m-Y'));
@@ -150,19 +150,4 @@
 		return $mail->Send() ? true : false;
 	}
 
-	public function show_message($type, $content)
-	{
-		if ($type == 'primary')
-			$export = '<div class="alert shake alert-icon alert-primary" role="alert"><i class="fe fe-bell mr-2" aria-hidden="true"></i>' . $content . '</div>';
-		elseif ($type == 'success')
-			$export = '<div class="alert shake alert-icon alert-success" role="alert"><i class="fe fe-check mr-2" aria-hidden="true"></i>' . $content . '</div>';
-		elseif ($type == 'danger')
-			$export = '<div class="alert shake alert-icon alert-danger" role="alert"><i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>' . $content . '</div>';
-		elseif ($type == 'info')
-			$export = '<div class="alert shake alert-info" role="alert"><i class="fe fe-info mr-2" aria-hidden="true"></i>' . $content . '</div>';
-		elseif ($type == 'warning')
-			$export = '<div class="alert shake alert-warning" role="alert"><i class="fe fe-alert-circle mr-2" aria-hidden="true"></i>' . $content . '</div>';
-
-		return $export;
-	}
 }

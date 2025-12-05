@@ -1,6 +1,6 @@
-<?php class view extends init
+<?php class view
 {
-    private function sanitize_output($buffer)
+    private static function sanitize_output($buffer)
     {
         $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');
         $replace = array('>', '<', '\\1', '');
@@ -8,12 +8,12 @@
         return $buffer;
     }
 
-    public function html($path, $data)
+    public static function html($path, $data)
     {
         if (isset($data["app"]["get"]["view_json"]))
-            return $this->json($data) . die();
+            return self::json($data) . die();
         elseif (isset($data["app"]["get"]["view_layout"]))
-            return $this->layout($path, $data) . die();
+            return self::layout($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
@@ -28,12 +28,12 @@
         ob_end_clean();
     }
 
-    public function layout($path, $data)
+    public static function layout($path, $data)
     {
         if (isset($data["app"]["get"]["view_json"]))
-            return $this->json($data) . die();
+            return self::json($data) . die();
         elseif (isset($data["app"]["get"]["view_html"]))
-            return $this->html($path, $data) . die();
+            return self::html($path, $data) . die();
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
@@ -54,7 +54,7 @@
         ob_end_clean();
     }
 
-    public function json($data)
+    public static function json($data)
     {
         ob_start(array("view", "sanitize_output"));
         header('Content-Type: application/json; charset=utf-8');
