@@ -3,11 +3,16 @@
     <h1><?= $title ?></h1>
     <?php include LAYOUT . "/menu.php"; ?>
     <div class="content">
-        <div class="row">
-            <div class="col">
+        <div class="d-flex">
+            <div>
 
                 <form action="<?= $app["uri"] ?>?get_1=data_1&get_2=data_2" method="post">
                     <table>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">
+                                <h3>Örnek Form</h3>
+                            </td>
+                        </tr>
                         <tr>
                             <td>Input 1</td>
                             <td><input type="text" name="input_1" value="<?= @$data["app"]["post"]["input_1"] ?>"></td>
@@ -27,7 +32,7 @@
                     </table>
                 </form>
             </div>
-            <div class="col">
+            <div>
                 <table>
                     <tr>
                         <td>Root : </td>

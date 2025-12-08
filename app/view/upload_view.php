@@ -3,9 +3,9 @@
     <h1><?= $title ?></h1>
     <?php include LAYOUT . "/menu.php"; ?>
     <div class="content">
-        <div class="row">
-            <div class="col">
-                <form action="<?= $app["uri"] ?>" method="post" enctype="multipart/form-data">
+        <div class="d-flex">
+            <div>
+                <form class="form_upload" action="<?= $app["uri"] ?>" method="post" enctype="multipart/form-data">
                     <table>
                         <tr>
                             <td>Dosya(lar) Seç</td>
@@ -18,7 +18,7 @@
                     </table>
                 </form>
             </div>
-            <div class="col">
+            <div>
                 <table>
                     <tr>
                         <td>Root : </td>
@@ -55,7 +55,7 @@
     </div>
     <div class="content">
         <h3>Yükleme Sonuçları</h3>
-
+        <div style="border:1px solid #D0D0D0; background:#f9f9f9; padding:10px; margin-top:10px;">
         <?php if (!empty($list_upload)): ?>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                 <thead>
@@ -92,6 +92,7 @@
         <?php else: ?>
             <p style="color: #999; text-align: center; padding: 20px;">Henüz dosya yüklenmedi.</p>
         <?php endif; ?>
+        </div>
     </div>
     <?php include LAYOUT . "/debug.php"; ?>
 </div>
