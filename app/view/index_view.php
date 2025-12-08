@@ -1,29 +1,7 @@
 <div id="container">
     <img class="logo" src="<?= $app["root"] ?>public/images/logo.png" alt="Logo">
     <h1><?= $title ?></h1>
-
-    <ul>
-        <li><a href="<?= $app["root"] ?>">Home</a></li>
-        <li><a href="<?= $app["root"] ?>corporate/">Corporate</a></li>
-        <li><a href="<?= $app["root"] ?>contact">Contact</a></li>
-        <li><a href="<?= $app["root"] ?>upload">Upload</a></li>
-        <li>
-            <a href="<?= $app["root"] ?>admin">Admin</a>
-            <ul>
-                <li><a href="<?= $app["root"] ?>admin/">Admin</a></li>
-                <li><a href="<?= $app["root"] ?>admin/logo/">Logo</a></li>
-                <li><a href="<?= $app["root"] ?>admin/settings">Settings</a></li>
-                <li><a href="<?= $app["root"] ?>admin/user/">User</a>
-                    <ul>
-                        <li><a href="<?= $app["root"] ?>admin/user">User</a></li>
-                        <li><a href="<?= $app["root"] ?>admin/user/add">Add</a></li>
-                        <li><a href="<?= $app["root"] ?>admin/user/edit">Edit</a></li>
-                    </ul>
-
-                </li>
-            </ul>
-        </li>
-    </ul>
+    <?php include LAYOUT . "/menu.php"; ?>
     <div class="content">
         <div class="row">
             <div class="col">

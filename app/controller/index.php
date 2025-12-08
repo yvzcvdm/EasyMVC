@@ -31,6 +31,7 @@
     public function upload($data)
     {
         $data["title"] = "Upload";
+        $data["text_code"] = init::random_text_code(20);
         $result = $this->file->upload("file_input[]", "/public/uploads/yavuz/");
         $data["list_upload"] = $result['uploads'];
         $data["errors"] = $result['errors'];
