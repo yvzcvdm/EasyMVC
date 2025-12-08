@@ -91,7 +91,7 @@ spl_autoload_register(function ($className) {
 
 **Kullanım:**
 ```php
-$file = new File();           // core/File.php otomatik yüklenir
+$file = new file();           // core/File.php otomatik yüklenir
 $user = new user_Model();     // app/model/user.php otomatik yüklenir
 $blog = new blog();           // app/controller/blog.php otomatik yüklenir
 ```
@@ -160,7 +160,7 @@ $app = [
     "raw"       => $raw_input,                 // Raw JSON input
     
     // HTTP İstek Bilgileri
-    "method"    => "POST",                     // HTTP metodu (GET, POST, PUT, DELETE)
+    "method"    => "POST",                     // HTTP metodu (GET, POST, PUT, DELETE, PATCH)
     "ip"        => "192.168.1.100",            // İstemci IP adresi (proxy desteği)
     "host"      => "example.com",              // Domain/host adı
     "port"      => 80,                         // Bağlantı portu
@@ -171,8 +171,8 @@ $app = [
     "is_mobile" => false,                      // Mobil cihaz kontrolü
     
     // Content İçerik Bilgileri
-    "content_type"   => "application/json",    // Content türü
-    "content_length" => 2048,                  // Veri boyutu
+    "content_type"   => "application/json",    // Content türü (request)
+    "content_length" => 2048,                  // Veri boyutu (request)
     "accept"         => "application/json",   // İstemci kabul ettiği MIME türü
     "language"       => "tr-TR,tr;q=0.9",     // Tercih edilen dil
     "authorization"  => "Bearer token123",    // Auth header (Bearer, Basic vb.)
@@ -207,7 +207,7 @@ public function api_endpoint($data)
     $app_data = $data['app'];
     
     // İstemci bilgileri
-    $method = $app_data['method'];          // POST, GET, vb.
+    $method = $app_data['method'];          // POST, GET, PUT, PATCH, DELETE vb.
     $ip = $app_data['ip'];                  // İstemci IP adresi
     $is_mobile = $app_data['is_mobile'];    // Mobil cihaz mı?
     $user_agent = $app_data['user_agent'];  // Tarayıcı bilgisi
@@ -215,12 +215,13 @@ public function api_endpoint($data)
     // Content bilgileri (API için önemli)
     $content_type = $app_data['content_type'];   // application/json vb.
     $authorization = $app_data['authorization']; // Bearer token vb.
+    $request_method = $app_data['method'];       // HTTP metodu
     
     // Zaman bilgileri (Logging için)
     $timestamp = $app_data['microtime'];    // Hassas zaman
     
     // Güvenlik kontrolü
-    if ($method !== 'POST') {
+    if ($request_method !== 'POST') {
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
         exit;
@@ -240,12 +241,269 @@ public function api_endpoint($data)
     }
     
     // Loglama
-    $log = "[{$app_data['request_time']}] {$ip} - {$method} - {$app_data['uri']} - {$app_data['user_agent']}";
+    $log = "[{$app_data['request_time']}] {$ip} - {$request_method} - {$app_data['uri']} - {$app_data['user_agent']}";
     file_put_contents('/var/log/api.log', $log . PHP_EOL, FILE_APPEND);
     
     echo json_encode(['success' => true, 'message' => 'OK']);
 }
 ```
+
+---
+
+### 6. **HTTP Client - REST API Entegrasyonu**
+
+EasyMVC, `http` sınıfı ile dış API'lere kolay ve güvenli bağlantı sağlar:
+
+```php
+// Basit kullanım
+$http = new http('api_hubspot');
+$result = $http->get('/crm/v3/objects/contacts');
+
+// Config-based API yönetimi
+$http = new http('api_wiveda');
+$result = $http->post('/system/user', [
+    'name' => 'John',
+    'email' => 'john@example.com'
+]);
+
+// Static method ile
+$result = http::request('PATCH', '/endpoint', ['status' => 'active'], 'api_hubspot');
+```
+
+**Desteklenen HTTP Yöntemleri:**
+- GET - Veri almak
+- POST - Veri oluşturmak
+- PUT - Tüm veriyi değiştirmek
+- PATCH - Kısmi veriyi değiştirmek
+- DELETE - Veri silmek
+- HEAD - Header bilgisi almak
+- OPTIONS - İzin verilen yöntemleri öğrenmek
+
+**API Konfigürasyonu (app.ini):**
+```ini
+[api_hubspot]
+base_url = 'https://api.hubapi.com'
+api_key = 'your-hubspot-api-key'
+timeout = 30
+verify_ssl = true
+
+[api_wiveda]
+base_url = 'https://api.wiveda.com'
+api_key = 'your-wiveda-api-key'
+api_token = ''
+timeout = 30
+verify_ssl = true
+```
+
+**Response Yapısı:**
+```php
+$result = $http->get('/endpoint');
+
+// Dönen array:
+[
+    'success' => true,                 // bool - İstek başarılı mı?
+    'status_code' => 200,              // int - HTTP status kodu
+    'data' => [],                      // mixed - Response verisi (auto JSON decode)
+    'headers' => [],                   // array - Response headers
+    'error' => null,                   // string|null - Hata mesajı
+    'message' => 'İstek başarılı'     // string - Durum mesajı
+]
+
+// Kontrol etme
+if ($result['success'] && $result['status_code'] === 200) {
+    $data = $result['data'];
+} else {
+    echo "Hata: " . $result['error'];
+}
+```
+
+**Detaylı Kullanım Örnekleri:**
+
+```php
+// Custom header ekleme
+$http = new http('api_hubspot');
+$result = $http
+    ->withHeader('X-Custom-Header', 'value')
+    ->get('/endpoint');
+
+// Query parametreleri
+$result = $http->get('/contacts', [
+    'limit' => 100,
+    'offset' => 200
+]);
+
+// Bearer token
+$result = (new http('api_hubspot'))
+    ->withAuth('custom-token')
+    ->post('/endpoint', ['data' => 'value']);
+
+// Basic auth
+$result = (new http('https://api.example.com'))
+    ->withBasicAuth('username', 'password')
+    ->get('/protected');
+
+// Timeout ve SSL ayarları
+$result = $http
+    ->setTimeout(60)
+    ->verifySSL(false)
+    ->get('/slow-endpoint');
+```
+
+**HTTP Class Yapısı ve Özellikleri:**
+
+HTTP sınıfı, CURL kütüphanesi üzerine kurulu modern bir REST API client'ıdır:
+
+```
+http Class Mimarisi:
+
+┌─────────────────────────────────────────┐
+│         http Class                      │
+├─────────────────────────────────────────┤
+│ Constructor($config_name)               │ → Config'den API ayarlarını yükle
+│                                         │
+│ Static Methods:                         │
+│  • request($method, $endpoint, $data)   │ → Tek satırda istek yap
+│                                         │
+│ Instance Methods:                       │
+│  • get($endpoint, $params)              │ → GET isteği
+│  • post($endpoint, $body)               │ → POST isteği
+│  • put($endpoint, $body)                │ → PUT isteği
+│  • patch($endpoint, $body)              │ → PATCH isteği
+│  • delete($endpoint, $body)             │ → DELETE isteği
+│  • head($endpoint)                      │ → HEAD isteği
+│  • options($endpoint)                   │ → OPTIONS isteği
+│                                         │
+│ Fluent Methods (Chaining):              │
+│  • withParams(array $params)            │ → Query parametreleri ekle
+│  • withHeader($key, $value)             │ → Tek header ekle
+│  • withHeaders(array $headers)          │ → Birden fazla header ekle
+│  • withAuth($token)                     │ → Bearer token ekle
+│  • withBasicAuth($user, $pass)          │ → Basic auth ekle
+│  • setTimeout($seconds)                 │ → Timeout ayarla
+│  • verifySSL($bool)                     │ → SSL doğrulaması
+│                                         │
+│ Helper Methods:                         │
+│  • getStatusCode()                      │ → Son HTTP status kodu
+│  • isSuccess()                          │ → 200-299 arasında mı?
+│  • getLastError()                       │ → Son hata mesajı
+│  • getResponseHeader($name)             │ → Spesifik header getir
+│  • getResponseHeaders()                 │ → Tüm headerları getir
+└─────────────────────────────────────────┘
+```
+
+**İç Yapı (Private Methods):**
+
+```php
+private function loadConfig($config_name)
+  → app.ini'den API konfigürasyonunu yükle
+  → api_key, api_token, timeout, verify_ssl ayarla
+  → Authorization header'ını hazırla
+
+private function buildUrl($endpoint)
+  → Base URL + endpoint'i birleştir
+  → Tam URL'yi oluştur
+
+private function executeRequest($method, $url, $body)
+  → CURL kütüphanesini başlat
+  → Headers, options, body'yi ayarla
+  → İsteği gönder
+  → Response'u al ve parse et
+
+private function parseResponse($response)
+  → JSON'ı otomatik decode et
+  → Plain text'i döndür
+
+private function formatResponse($data, $success)
+  → Standardized response array'i oluştur
+```
+
+**Config-Based Entegrasyon:**
+
+HTTP class, `app.ini` dosyasından API ayarlarını otomatik olarak yükler:
+
+```ini
+; app.ini
+[http]
+; Varsayılan HTTP ayarları
+timeout = 30
+verify_ssl = true
+max_redirects = 5
+
+[api_hubspot]
+; HubSpot API konfigürasyonu
+base_url = 'https://api.hubapi.com'
+api_key = 'your-hubspot-api-key'
+timeout = 30
+verify_ssl = true
+
+[api_wiveda]
+; Wiveda API konfigürasyonu
+base_url = 'https://api.wiveda.com'
+api_key = 'your-wiveda-api-key'
+api_token = 'your-token'
+timeout = 30
+verify_ssl = true
+```
+
+Constructor çağrıldığında:
+```php
+$http = new http('api_hubspot');
+// ↓ Otomatik yükle:
+// - base_url = https://api.hubapi.com
+// - Authorization: Bearer your-hubspot-api-key
+// - timeout = 30
+// - verify_ssl = true
+```
+
+**Fluent Interface (Method Chaining):**
+
+HTTP class fluent interface pattern'ı kullanır. Bu, method'ları zincirlemeyi sağlar:
+
+```php
+// Zincir halinde çağrılar
+$result = (new http('api_hubspot'))
+    ->withParams(['limit' => 100])      // query string ekle
+    ->withHeader('X-Request-ID', '123') // custom header ekle
+    ->withHeader('X-Custom', 'value')
+    ->setTimeout(60)                     // timeout ayarla
+    ->get('/crm/v3/objects/contacts');   // GET isteği yap
+
+// Her method 'return $this' döndürdüğü için devam edilebilir
+```
+
+**Response Handling:**
+
+Tüm istekler standart bir response array'i döndürür:
+
+```php
+$result = $http->get('/endpoint');
+
+// Yapısı:
+$result = [
+    'success'     => bool,      // İstek başarılı mı?
+    'status_code' => int,       // HTTP status (200, 404, 500 vb.)
+    'data'        => mixed,     // Dönen veri (JSON auto-decoded)
+    'headers'     => array,     // Response başlıkları
+    'error'       => string,    // Hata mesajı (başarısızsa)
+    'message'     => string     // Durum açıklaması
+];
+
+// Hata kontrolü
+if (!$result['success']) {
+    error_log($result['error']);
+    return;
+}
+
+// Status kontrolü
+if ($result['status_code'] === 404) {
+    // Kaynak bulunamadı
+}
+
+// Veriyi işle
+$data = $result['data'];
+```
+
+Detaylı dokümantasyon: [HTTP_README.md](HTTP_README.md)
 
 ---
 
@@ -452,7 +710,7 @@ Tamamen security odaklı, esnek dosya yükleme:
 // Controller
 public function upload($data)
 {
-    $file = new File();
+    $file = new file();
     $result = $file->upload("file_input[]", "/public/uploads/");
     
     // Sonuç array'inde her item'in status ve detayları vardır
@@ -805,7 +1063,7 @@ public function contact($data)
 ```php
 public function upload($data)
 {
-    $file = new File();
+    $file = new file();
     $result = $file->upload("file_input[]", "/public/uploads/");
     
     $data["items"] = $result['items'];  // Tüm upload işlemleri

@@ -3,7 +3,7 @@
     private $file;
     public function __construct()
     {
-        $this->file = new File();
+        $this->file = new file();
     }
 
     public function index($data)
