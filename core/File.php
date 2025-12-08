@@ -28,14 +28,9 @@ class File
      */
     private function loadConfig()
     {
-        $config_file = ROOT . '/app.ini';
-        if (file_exists($config_file)) {
-            $ini = parse_ini_file($config_file, true);
-            if (isset($ini['upload'])) {
-                $this->config = $ini['upload'];
-            } else {
-                $this->setDefaultConfig();
-            }
+        $config = app::get_config();
+        if ($config && isset($config['upload'])) {
+            $this->config = $config['upload'];
         } else {
             $this->setDefaultConfig();
         }

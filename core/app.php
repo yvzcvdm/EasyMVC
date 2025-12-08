@@ -11,11 +11,14 @@ class app
     private $method;
     private $error;
     public $config;
+    
+    // Statik config cache
+    private static $config_cache = null;
 
     public function __construct()
     {
         $this->error = true;
-        $this->config = $this->get_config();
+        $this->config = self::get_config();
         $this->uri = $this->get_uri();
         $this->root = $this->get_root();
         $this->path = $this->get_path();
@@ -133,7 +136,20 @@ class app
             $parts = array_filter($parts);
         }
         
-        $param = array_merge($param, $this->uri_get($parts));
+        // Parametreleri al
+        $uri_params = $this->uri_get($parts);
+        
+        // Her parametreyi numeric kontrol et
+        foreach ($uri_params as $key => $value) {
+            if (!ctype_digit($value)) {
+                // Non-numeric parametre bulundu, 404 döndür
+                http_response_code(404);
+                require_once CORE . SEP . "error.php";
+                exit;
+            }
+        }
+        
+        $param = array_merge($param, $uri_params);
         $param = array_merge($param, $this->input());
         
         return init::array_clear($param);
@@ -169,15 +185,23 @@ class app
         return is_array($input_array) ? $input_array : $input_raw;
     }
 
-    public function get_config()
+    public static function get_config()
     {
+        // Eğer cache'de varsa, cache'den dön
+        if (self::$config_cache !== null) {
+            return self::$config_cache;
+        }
+        
         $config_file = ROOT . SEP . 'app.ini';
         if (!is_file($config_file)) {
+            self::$config_cache = false;
             return false;
         }
         
         $data = parse_ini_file($config_file);
-        return is_array($data) ? $data : false;
+        self::$config_cache = is_array($data) ? $data : false;
+        
+        return self::$config_cache;
     }
 
     private function is_path($path = null)

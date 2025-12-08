@@ -26,7 +26,7 @@
 
     public function __construct()
     {
-        $this->config = parse_ini_file(ROOT . SEP . 'app.ini');
+        $this->config = app::get_config();
         $this->server = $this->config["mail_server"];
         $this->username = $this->config["mail_user"];
         $this->password = $this->config["mail_pass"];
