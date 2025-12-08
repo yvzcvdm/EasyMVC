@@ -168,3 +168,66 @@ form input {
     border: 1px solid #D0D0D0;
     background: #f5f5f5;
 }
+
+/* Debug Table Styles */
+.debug-title {
+    margin-top: 30px;
+    color: #333;
+}
+
+.debug-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.debug-header {
+    background: #f5f5f5;
+    font-weight: bold;
+    color: #333;
+}
+
+.debug-th {
+    border: 1px solid #27394bff;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.debug-row {
+    background: #fff;
+    border-bottom: 1px solid #999;
+}
+
+.debug-row-nested {
+    background: #ecf0f1;
+}
+
+.debug-key {
+    border: 1px solid #223344ff;
+    padding: 1px 6px;
+    font-weight: bold;
+    background: #f5f5f5;
+    color: #333;
+}
+.debug-value .debug-table {
+    margin: 5px 0;
+} 
+td .debug-key {
+    color: #333;
+}
+.debug-key-nested {
+    background: #d5dbdb;
+    color: #2c3e50;
+}
+
+.debug-value {
+    border: 1px solid #34495e;
+    padding: 1px 6px;
+    color: #2c3e50;
+}
+
+.debug-table-nested {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1px 0;
+}
