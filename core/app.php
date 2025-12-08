@@ -169,9 +169,75 @@ class app
                 "cookie" => $_COOKIE,
                 "session" => $_SESSION ?? [],
                 "files" => $_FILES,
-                "raw" => $this->get_input_raw()
+                "raw" => $this->get_input_raw(),
+                "method" => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                "ip" => $this->get_client_ip(),
+                "host" => $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost',
+                "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? '',
+                "referer" => $_SERVER['HTTP_REFERER'] ?? '',
+                "https" => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? true : false,
+                "query_string" => $_SERVER['QUERY_STRING'] ?? '',
+                "content_type" => $_SERVER['CONTENT_TYPE'] ?? '',
+                "content_length" => $_SERVER['CONTENT_LENGTH'] ?? 0,
+                "request_time" => $_SERVER['REQUEST_TIME'] ?? time(),
+                "microtime" => microtime(true),
+                "port" => $_SERVER['SERVER_PORT'] ?? 80,
+                "protocol" => $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1',
+                "accept" => $_SERVER['HTTP_ACCEPT'] ?? '',
+                "language" => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+                "authorization" => $this->get_auth_header(),
+                "is_mobile" => $this->is_mobile()
             ]
         ];
+    }
+
+    private function get_client_ip()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        }
+        
+        return filter_var(trim($ip), FILTER_VALIDATE_IP) ?: '0.0.0.0';
+    }
+
+    private function get_auth_header()
+    {
+        if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+            return $_SERVER['HTTP_AUTHORIZATION'];
+        }
+        
+        if (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            return $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        }
+        
+        return '';
+    }
+
+    private function is_mobile()
+    {
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $mobile_patterns = [
+            'Mobile',
+            'Android',
+            'iPhone',
+            'iPad',
+            'Windows Phone',
+            'BlackBerry',
+            'Opera Mini',
+            'IEMobile'
+        ];
+        
+        foreach ($mobile_patterns as $pattern) {
+            if (stripos($user_agent, $pattern) !== false) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function get_input_raw()
@@ -243,39 +309,6 @@ class app
         return $param;
     }
 
-    private function get_model($file_name = null, $dir = null)
-    {
-        $dir = $dir ?: MODEL;
-        
-        if (!is_dir($dir) || empty($file_name)) {
-            return false;
-        }
-
-        $files = array_diff(scandir($dir), ['.', '..']);
-        
-        if (!is_array($files)) {
-            return false;
-        }
-
-        foreach ($files as $value) {
-            $full_path = $dir . SEP . $value;
-            
-            if (is_file($full_path)) {
-                $pathinfo = pathinfo($full_path);
-                if (($pathinfo['extension'] ?? null) === 'php' && $file_name === $pathinfo['filename']) {
-                    return $full_path;
-                }
-            } elseif (is_dir($full_path)) {
-                $file = $this->get_model($file_name, $full_path);
-                if ($file) {
-                    return $file;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
     public function __destruct()
     {
         if ($this->file && class_exists($this->file)) {

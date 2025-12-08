@@ -144,17 +144,45 @@ Layout dosyası (app/layout/header.php ve footer.php):
 ```php
 // Controller ve View'de her yerde erişilebilir:
 $app = [
+    // Routing Bilgileri
     "root"      => "/",                        // Site root path
     "path"      => "blog/",                    // Controller path
     "file"      => "blog",                     // Controller filename
     "function"  => "detail",                   // Method name
     "uri"       => "/blog/detail/5/",          // Full URI
+    
+    // Form Verileri
     "post"      => $_POST,                     // POST verileri
     "get"       => $_GET,                      // GET verileri
     "cookie"    => $_COOKIE,                   // Cookie verileri
     "session"   => $_SESSION,                  // Session verileri
     "files"     => $_FILES,                    // Upload files
     "raw"       => $raw_input,                 // Raw JSON input
+    
+    // HTTP İstek Bilgileri
+    "method"    => "POST",                     // HTTP metodu (GET, POST, PUT, DELETE)
+    "ip"        => "192.168.1.100",            // İstemci IP adresi (proxy desteği)
+    "host"      => "example.com",              // Domain/host adı
+    "port"      => 80,                         // Bağlantı portu
+    "protocol"  => "HTTP/1.1",                 // HTTP versiyonu
+    "https"     => false,                      // HTTPS bağlantı (true/false)
+    "user_agent"=> "Mozilla/5.0...",           // Tarayıcı bilgisi
+    "referer"   => "https://google.com",       // Önceki sayfa
+    "is_mobile" => false,                      // Mobil cihaz kontrolü
+    
+    // Content İçerik Bilgileri
+    "content_type"   => "application/json",    // Content türü
+    "content_length" => 2048,                  // Veri boyutu
+    "accept"         => "application/json",   // İstemci kabul ettiği MIME türü
+    "language"       => "tr-TR,tr;q=0.9",     // Tercih edilen dil
+    "authorization"  => "Bearer token123",    // Auth header (Bearer, Basic vb.)
+    
+    // Zaman Bilgileri
+    "request_time"   => 1701863400,            // Unix timestamp
+    "microtime"      => 1701863400.5234,       // Hassas zaman (API logging için)
+    
+    // URL Parametreleri
+    "query_string"   => "sort=name&page=2",    // URL sorgu dizesi
     "uri_0" => "detail",                       // URI parametresi 1
     "uri_1" => "5",                            // URI parametresi 2
 ];
@@ -170,6 +198,53 @@ $app = [
 <!-- Veya Controller'den geçilen $data array'i -->
 <h1><?= $title ?></h1>
 <p><?= $content ?></p>
+```
+
+**HTTP İstek Bilgilerini Controller'de Kullanma:**
+```php
+public function api_endpoint($data)
+{
+    $app_data = $data['app'];
+    
+    // İstemci bilgileri
+    $method = $app_data['method'];          // POST, GET, vb.
+    $ip = $app_data['ip'];                  // İstemci IP adresi
+    $is_mobile = $app_data['is_mobile'];    // Mobil cihaz mı?
+    $user_agent = $app_data['user_agent'];  // Tarayıcı bilgisi
+    
+    // Content bilgileri (API için önemli)
+    $content_type = $app_data['content_type'];   // application/json vb.
+    $authorization = $app_data['authorization']; // Bearer token vb.
+    
+    // Zaman bilgileri (Logging için)
+    $timestamp = $app_data['microtime'];    // Hassas zaman
+    
+    // Güvenlik kontrolü
+    if ($method !== 'POST') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        exit;
+    }
+    
+    if (!$authorization || strpos($authorization, 'Bearer') === false) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
+    }
+    
+    // İstemci engelleme (örnek: belirli IP)
+    if ($ip === '192.168.1.999') {
+        http_response_code(403);
+        echo json_encode(['error' => 'Access denied']);
+        exit;
+    }
+    
+    // Loglama
+    $log = "[{$app_data['request_time']}] {$ip} - {$method} - {$app_data['uri']} - {$app_data['user_agent']}";
+    file_put_contents('/var/log/api.log', $log . PHP_EOL, FILE_APPEND);
+    
+    echo json_encode(['success' => true, 'message' => 'OK']);
+}
 ```
 
 ---
@@ -384,6 +459,25 @@ public function upload($data)
     $data["items"] = $result['items'];  
     view::layout("upload", $data);
 }
+```
+
+**Upload Sonuç Formatı (items array):**
+```php
+[
+    'items' => [
+        [
+            'file'    => 'document.pdf',                    // Dosya adı
+            'status'  => 'success',                         // success veya error
+            'path'    => '/public/uploads/1701234567.pdf', // Yüklü dosya yolu (başarılı ise)
+            'message' => 'File uploaded successfully'       // Detay mesajı
+        ],
+        [
+            'file'    => 'large_video.mp4',
+            'status'  => 'error',
+            'message' => 'File size exceeds maximum limit (5MB)'
+        ]
+    ]
+]
 ```
 
 **Yapılandırma (app.ini):**
