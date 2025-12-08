@@ -3,12 +3,12 @@
 class app
 {
     private $root;
-    private $path;
-    private $file;
-    private $func;
+    private $segments;
+    private $controller_class;
+    private $method_name;
+    private $current_path;
     private $params;
     private $uri;
-    private $method;
     private $error;
     public $config;
     
@@ -21,19 +21,10 @@ class app
         $this->config = self::get_config();
         $this->uri = $this->get_uri();
         $this->root = $this->get_root();
-        $this->path = $this->get_folder();
-        $this->file = $this->get_file();
-        $this->func = $this->get_function();
+        
+        // Parse URL segments başlayarak folder/file/method'u bul
+        $this->parse_segments();
         $this->params = $this->get_param();
-
-    }
-
-    private function get_root()
-    {
-        $url_path = dirname($_SERVER['PHP_SELF']) . '/';
-        $url_path = stripslashes(trim($url_path));
-        $url_path = preg_replace('/(\/+)/', '/', $url_path);
-        return $url_path;
     }
 
     private function get_uri()
@@ -44,100 +35,158 @@ class app
         return $uri;
     }
 
-    private function get_folder()
+    private function get_root()
     {
-        $url_path = explode($this->root, $this->uri ?? '');
-        $url_path = array_filter($url_path);
-        $url_path = array_values($url_path);
-        
-        if (count($url_path) < 2) {
-            $url_path = array_shift($url_path) ?? '';
-            $url_path = explode("/", $url_path);
-            $url_path = array_filter($url_path);
-        }
-        
-        $url_path = $this->is_path($url_path);
-        $url_path = str_replace("\\", "/", $url_path);
+        $url_path = dirname($_SERVER['PHP_SELF']) . '/';
+        $url_path = stripslashes(trim($url_path));
         $url_path = preg_replace('/(\/+)/', '/', $url_path);
-        
         return $url_path;
     }
 
-    private function get_file()
+    private function parse_segments()
     {
-        $url_path = $this->root . $this->path;
-        $url_path = str_replace("\\", "/", $url_path);
-        $url_path = preg_replace('/(\/+)/', '/', $url_path);
-        $parts = explode($url_path, $this->uri ?? '');
-        $parts = array_filter($parts);
-        $file = array_shift($parts) ?? '';
-        $file = explode("/", $file);
-        $file = array_filter($file);
-        $file = array_shift($file) ?? 'index';
-        $file = init::slug($file);
+        // URI'den root'u kaldır
+        $remaining = substr($this->uri, strlen($this->root));
+        $remaining = trim($remaining, '/');
         
-        // Validate filename format
-        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $file)) {
-            return 'index';
+        // Boş string ise root
+        if (empty($remaining)) {
+            $this->segments = [];
+            $this->resolve_controller('', []);
+            return;
         }
         
-        $controller_file = CONTROLLER . $this->path . $file . '.php';
-        return file_exists($controller_file) ? $file : 'index';
+        // URL segments'i al
+        $segments = explode('/', $remaining);
+        $segments = array_filter($segments);
+        $segments = array_values($segments);
+        
+        // İlk segmenti klasör olarak denetle, sonra dosya ve method
+        // segments'i kopyala çünkü resolve_controller içinde array_shift yapılacak
+        $remaining_segments = $segments;
+        $this->resolve_controller('', $remaining_segments);
     }
 
-    private function get_function()
+    private function resolve_controller($current_path, $remaining_segments)
     {
-        $url_path = $this->root . $this->path;
-        $url_path = str_replace("\\", "/", $url_path);
-        $url_path = preg_replace('/(\/+)/', '/', $url_path);
-        
-        if ($this->file != "index") {
-            $url_path .= $this->file;
+        // Eğer segment kalmadıysa veya 0. indexi olmadıysa
+        if (empty($remaining_segments)) {
+            // Dosya bulunamadı, index.php kullan
+            $this->load_controller($current_path, 'index', []);
+            return;
         }
         
-        $parts = explode($url_path, $this->uri);
-        $parts = array_filter($parts);
-        $func = array_shift($parts) ?? '';
-        $func = explode("/", $func);
-        $func = array_filter($func);
-        $func = array_shift($func) ?? 'index';
+        $segment = array_shift($remaining_segments);
+        $segment = init::slug($segment);
         
-        // Validate function name format
-        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $func)) {
-            $func = 'index';
+        // Segment adını validate et
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $segment)) {
+            http_response_code(404);
+            require_once CORE . SEP . "error.php";
+            exit;
         }
         
-        if ($this->file && class_exists($this->file)) {
-            $this->method = new $this->file($this);
-            $func = (method_exists($this->method, $func)) ? $func : "index";
+        // Path'i düzgun şekilde oluştur
+        $next_path = empty($current_path) ? SEP . $segment : $current_path . SEP . $segment;
+        
+        $folder_path = CONTROLLER . $next_path;
+        $file_path = CONTROLLER . $next_path . '.php';
+        
+        // 1. Klasör mü diye kontrol et
+        if (is_dir($folder_path)) {
+            // Klasör bulundu, klasör içinde devam et
+            $this->resolve_controller($next_path, $remaining_segments);
+            return;
         }
         
-        return init::slug($func);
+        // 2. Dosya mı diye kontrol et
+        if (file_exists($file_path)) {
+            // Dosya bulundu, bu dosyada method'u ara
+            $this->load_controller($current_path, $segment, $remaining_segments);
+            return;
+        }
+        
+        // 3. Ne klasör ne dosya, önceki klasöre index.php'de method ara
+        if ($current_path === '') {
+            // Root'ta index.php'de segment adını method olarak dene
+            $this->load_controller('', 'index', [$segment, ...$remaining_segments]);
+            return;
+        }
+        
+        // current_path'te index.php'de segment adını method olarak dene
+        $this->load_controller($current_path, 'index', [$segment, ...$remaining_segments]);
+    }
+
+    private function load_controller($folder_path, $file_name, $remaining_segments)
+    {
+        // Dosya yolu kontrol et
+        $path = empty($folder_path) ? '' : $folder_path;
+        $controller_file = CONTROLLER . $path . SEP . $file_name . '.php';
+        
+        // Current path'i sakla
+        $this->current_path = $folder_path;
+        
+        if (!file_exists($controller_file)) {
+            // Eğer index değilse, index.php'ye geri dön
+            if ($file_name !== 'index') {
+                $this->load_controller($folder_path, 'index', [$file_name, ...$remaining_segments]);
+                return;
+            }
+            
+            // index.php bile yok, 404
+            http_response_code(404);
+            require_once CORE . SEP . "error.php";
+            exit;
+        }
+        
+        // Dosya class adını belirle (file name = class name)
+        $this->controller_class = $file_name;
+        
+        // require dosya
+        require_once $controller_file;
+        
+        // Sınıf var mı kontrol et
+        if (!class_exists($this->controller_class)) {
+            http_response_code(404);
+            require_once CORE . SEP . "error.php";
+            exit;
+        }
+        
+        // Method adını belirle
+        $method = !empty($remaining_segments) ? array_shift($remaining_segments) : 'index';
+        $method = init::slug($method);
+        
+        // Method adı validate et
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $method)) {
+            $method = 'index';
+        }
+        
+        // Sınıfı instantiate et ve method kontrolü
+        $instance = new $this->controller_class([]);
+        
+        if (!method_exists($instance, $method)) {
+            $method = 'index';
+            
+            // index method bile yok mu?
+            if (!method_exists($instance, 'index')) {
+                http_response_code(404);
+                require_once CORE . SEP . "error.php";
+                exit;
+            }
+        }
+        
+        $this->method_name = $method;
+        // Kalan segments parametreler olarak sakla
+        $this->segments = $remaining_segments;
     }
 
     private function get_param($param = [])
     {
-        $url_path = $this->path;
-        
-        if ($this->file != "index") {
-            $url_path .= $this->file . '/';
+        // URI parametreleri (segments)
+        $uri_params = [];
+        foreach ($this->segments as $key => $value) {
+            $uri_params['uri_' . $key] = $value;
         }
-        if ($this->func != "index") {
-            $url_path .= $this->func . '/';
-        }
-        
-        $parts = explode($url_path, $this->uri . '/');
-        $parts = array_filter($parts);
-        
-        if (count($parts) < 2) {
-            $parts = array_shift($parts) ?? '';
-            $parts = '/' . $parts;
-            $parts = explode("/", $parts);
-            $parts = array_filter($parts);
-        }
-        
-        // Parametreleri al
-        $uri_params = $this->uri_get($parts);
         
         // Her parametreyi numeric kontrol et
         foreach ($uri_params as $key => $value) {
@@ -155,22 +204,29 @@ class app
         return init::array_clear($param);
     }
 
+    private function get_current_path()
+    {
+        return empty($this->current_path) ? '/' : $this->current_path . '/';
+    }
+
     private function input()
     {
         return [
             "app" => [
                 "root" => $this->root,
-                "path" => $this->path,
-                "file" => $this->file,
-                "function" => $this->func,
+                "controller_class" => $this->controller_class,
+                "method" => $this->method_name,
                 "uri" => $this->uri,
+                "folder" => $this->get_current_path(),
+                "file" => $this->controller_class,
+                "method" => $this->method_name,
                 "post" => $_POST,
                 "get" => $_GET,
                 "cookie" => $_COOKIE,
                 "session" => $_SESSION ?? [],
                 "files" => $_FILES,
                 "raw" => $this->get_input_raw(),
-                "method" => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                "request_method" => $_SERVER['REQUEST_METHOD'] ?? 'GET',
                 "ip" => $this->get_client_ip(),
                 "host" => $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost',
                 "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? '',
@@ -311,11 +367,11 @@ class app
 
     public function __destruct()
     {
-        if ($this->file && class_exists($this->file)) {
+        if ($this->controller_class && class_exists($this->controller_class)) {
             try {
-                $this->method = new $this->file($this->params);
-                if ($this->func && method_exists($this->method, $this->func)) {
-                    call_user_func([$this->method, $this->func], (array) $this->params);
+                $instance = new $this->controller_class($this->params);
+                if ($this->method_name && method_exists($instance, $this->method_name)) {
+                    call_user_func([$instance, $this->method_name], (array) $this->params);
                     $this->error = false;
                 }
             } catch (Exception $e) {

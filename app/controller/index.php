@@ -17,14 +17,14 @@
     public function corporate($data)
     {
         $data["title"] = "Corporate";
-        $data["text_code"] = init::random_text_code(2);
+        $data["text_code"] = init::random_text_code(20);
         view::layout("index", $data);
     }
 
     public function contact($data)
     {
         $data["title"] = "Contact";
-        $data["text_code"] = init::random_text_code(3);
+        $data["text_code"] = init::random_text_code(30);
         view::layout("index", $data);
     }    
     
