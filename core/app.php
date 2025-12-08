@@ -21,7 +21,7 @@ class app
         $this->config = self::get_config();
         $this->uri = $this->get_uri();
         $this->root = $this->get_root();
-        $this->path = $this->get_path();
+        $this->path = $this->get_folder();
         $this->file = $this->get_file();
         $this->func = $this->get_function();
         $this->params = $this->get_param();
@@ -44,7 +44,7 @@ class app
         return $uri;
     }
 
-    private function get_path()
+    private function get_folder()
     {
         $url_path = explode($this->root, $this->uri ?? '');
         $url_path = array_filter($url_path);
