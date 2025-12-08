@@ -93,40 +93,5 @@
             <p style="color: #999; text-align: center; padding: 20px;">Henüz dosya yüklenmedi.</p>
         <?php endif; ?>
     </div>
-    <div class="content">
-        <h3 style="margin-top: 30px; color: #333;">Debug Bilgileri</h3>
-        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
-            Bu tablo, uygulamaya gelen tüm verileri göstermektedir. Başlıklar (GET, POST, SESSION vb.)
-            ve diğer sistem bilgilerini burada izleyebilirsiniz.
-        </p>
-
-        <table style="width: 100%; border-collapse: collapse; background: #fff;">
-            <tr style="background: #f0f0f0; font-weight: bold;">
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Key</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Value</th>
-            </tr>
-            <?php
-            function renderData($data, $level = 0)
-            {
-                foreach ($data as $key => $value): ?>
-                    <tr style="background: <?= $level > 0 ? '#f5f5f5' : '#fff' ?>;">
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; background: #fafafa; padding-left: <?= (8 + $level * 15) ?>px;">
-                            <?= htmlspecialchars($key) ?>
-                        </td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">
-                            <?php if (is_array($value)): ?>
-                                <table style="width: 100%; border-collapse: collapse; margin: 5px 0;">
-                                    <?php renderData($value, $level + 1); ?>
-                                </table>
-                            <?php else: ?>
-                                <?= htmlspecialchars($value) ?>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-            <?php endforeach;
-            }
-            renderData($data);
-            ?>
-        </table>
-    </div>
+    <?php include LAYOUT . "/debug.php"; ?>
 </div>
