@@ -18,9 +18,10 @@
 
     function text_short($text, $chars_limit)
 	{
+		$text = (string) $text;
 		if (strlen($text) > $chars_limit) {
 			$new_text = substr($text, 0, $chars_limit);
-			$new_text = trim($new_text);
+			$new_text = trim((string) $new_text);
 			return $new_text . "...";
 		} else {
 			return $text;
@@ -30,6 +31,7 @@
 	public static function array_clear($array)
 	{
 		array_walk_recursive($array, function (&$item) {
+			$item = (string) $item;
 			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
 		});
 		return $array;
@@ -81,7 +83,7 @@
 
 	public function valid_email($e)
 	{
-		return (bool)preg_match("`^[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`i", trim($e));
+		return (bool)preg_match("`^[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`i", trim((string) $e));
 	}
 
 	public function valid_password($password)

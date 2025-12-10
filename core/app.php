@@ -24,7 +24,7 @@ class app
         
         // Parse URL segments başlayarak folder/file/method'u bul
         $this->parse_segments();
-        $this->params = $this->get_param();
+        $this->params = $this->input();
     }
 
     private function get_uri()
@@ -184,24 +184,16 @@ class app
     {
         // URI parametreleri (segments)
         $uri_params = [];
-        foreach ($this->segments as $key => $value) {
-            $uri_params['uri_' . $key] = $value;
-        }
-        
-        // Her parametreyi numeric kontrol et
-        foreach ($uri_params as $key => $value) {
-            if (!ctype_digit($value)) {
-                // Non-numeric parametre bulundu, 404 döndür
-                http_response_code(404);
-                require_once CORE . SEP . "error.php";
-                exit;
+        if (is_array($this->segments)) {
+            foreach ($this->segments as $key => $value) {
+                // normalize segments to string and expose as uri_0, uri_1, ...
+                $uri_params['uri_' . $key] = is_null($value) ? '' : (string) $value;
             }
         }
-        
+
+        // Return URI params without enforcing numeric-only values.
         $param = array_merge($param, $uri_params);
-        $param = array_merge($param, $this->input());
-        
-        return init::array_clear($param);
+        return $param;
     }
 
     private function get_current_path()
@@ -209,16 +201,25 @@ class app
         return empty($this->current_path) ? '/' : $this->current_path . '/';
     }
 
+    public static function array_clear($array)
+	{
+		array_walk_recursive($array, function (&$item) {
+			$item = (string) $item;
+			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
+		});
+		return $array;
+	}
+
     private function input()
     {
-        return [
+        $param = [
             "app" => [
                 "root" => $this->root,
                 "method" => $this->method_name,
                 "uri" => $this->uri,
                 "folder" => $this->get_current_path(),
                 "file" => $this->controller_class,
-                "method" => $this->method_name,
+                "params" => $this->get_param(),
                 "post" => $_POST,
                 "get" => $_GET,
                 "cookie" => $_COOKIE,
@@ -244,6 +245,8 @@ class app
                 "is_mobile" => $this->is_mobile()
             ]
         ];
+        self::array_clear($param);
+        return $param;
     }
 
     private function get_client_ip()
@@ -297,13 +300,26 @@ class app
 
     public function get_input_raw()
     {
-        $input_raw = file_get_contents("php://input");
-        if ($input_raw === false) {
+        // Sadece Content-Type: application/json ise gövdeyi işle
+        $ctype = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '';
+        $ctype = strtolower((string) $ctype);
+
+        if (strpos($ctype, 'application/json') === false) {
             return [];
         }
-        
+
+        $input_raw = @file_get_contents('php://input');
+        if ($input_raw === false || $input_raw === null || $input_raw === '') {
+            return [];
+        }
+
         $input_array = json_decode($input_raw, true);
-        return is_array($input_array) ? $input_array : $input_raw;
+        if (is_array($input_array)) {
+            return $input_array;
+        }
+
+        // JSON içerik fakat decode edilemiyorsa ham içeriği 'raw' anahtarı altında döndür
+        return ['raw' => $input_raw];
     }
 
     public static function get_config()
@@ -323,45 +339,6 @@ class app
         self::$config_cache = is_array($data) ? $data : false;
         
         return self::$config_cache;
-    }
-
-    private function is_path($path = null)
-    {
-        $real = '';
-        $re = '';
-        
-        if (!is_array($path)) {
-            return SEP;
-        }
-        
-        foreach ($path as $ff) {
-            if (empty($ff)) {
-                continue;
-            }
-            
-            $re .= SEP . $ff;
-            
-            if (!is_dir(CONTROLLER . $re)) {
-                break;
-            }
-            
-            $real .= SEP . $ff;
-        }
-        
-        return !empty($real) ? $real . SEP : SEP;
-    }
-
-    private function uri_get($url_path = null)
-    {
-        $param = [];
-        
-        if (isset($url_path) && is_array($url_path)) {
-            foreach ($url_path as $key => $value) {
-                $param['uri_' . $key] = $value;
-            }
-        }
-        
-        return $param;
     }
 
     public function __destruct()

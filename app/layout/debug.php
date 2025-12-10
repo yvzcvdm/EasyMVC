@@ -11,7 +11,7 @@
             foreach ($data as $key => $value): ?>
                 <tr class="debug-row<?= $level > 0 ? ' debug-row-nested' : '' ?>">
                     <td class="debug-key<?= $level > 0 ? ' debug-key-nested' : '' ?>" style="padding-left: <?= (6 + $level * 12) ?>px;">
-                        <?= htmlspecialchars($key) ?>
+                        <?= htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8') ?>
                     </td>
                     <td class="debug-value">
                         <?php if (is_array($value)): ?>
@@ -19,7 +19,7 @@
                                 <?php renderData($value, $level + 1); ?>
                             </table>
                         <?php else: ?>
-                            <?= htmlspecialchars($value) ?>
+                            <?= htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') ?>
                         <?php endif; ?>
                     </td>
                 </tr>
