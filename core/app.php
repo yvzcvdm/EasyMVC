@@ -152,11 +152,9 @@ class app
             exit;
         }
         
-        // Method adını belirle. Eğer candidate numeric/invalid veya method yoksa
-        // candidate parametre olarak geri konulacak ve 'index' methodu kullanılacaktır.
-        $method = 'index';
-        // instantiate controller once for method checks
+        // Method adını belirle.
         $instance = new $this->controller_class([]);
+        $method = 'index';
 
         if (!empty($remaining_segments)) {
             $candidate = array_shift($remaining_segments);
@@ -165,19 +163,46 @@ class app
             // Eğer candidate geçerli bir method ismi formatındaysa ve sınıfta varsa kullan
             if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $candidate) && method_exists($instance, $candidate)) {
                 $method = $candidate;
+
+                // Kalan parametreler yalnızca rakamlardan oluşmalı
+                foreach ($remaining_segments as $seg) {
+                    if (!ctype_digit((string) $seg)) {
+                        http_response_code(404);
+                        require_once CORE . SEP . "error.php";
+                        exit;
+                    }
+                }
             } else {
-                // Aksi halde candidate parametre olarak geri konulsun
-                array_unshift($remaining_segments, $candidate);
-                // index methodu yoksa 404
-                if (!method_exists($instance, 'index')) {
+                // Candidate bir method değilse, sadece tamamen sayılardan oluşuyorsa parametre kabul et
+                if (ctype_digit((string) $candidate)) {
+                    // candidate'i tekrar remaining_segments'in başına koy
+                    array_unshift($remaining_segments, $candidate);
+
+                    // Tüm remaining_segments rakamlardan oluşmalı
+                    foreach ($remaining_segments as $seg) {
+                        if (!ctype_digit((string) $seg)) {
+                            http_response_code(404);
+                            require_once CORE . SEP . "error.php";
+                            exit;
+                        }
+                    }
+
+                    // index methodu olmalı
+                    if (!method_exists($instance, 'index')) {
+                        http_response_code(404);
+                        require_once CORE . SEP . "error.php";
+                        exit;
+                    }
+                    $method = 'index';
+                } else {
+                    // Ne method ne numeric parametre -> 404
                     http_response_code(404);
                     require_once CORE . SEP . "error.php";
                     exit;
                 }
-                $method = 'index';
             }
         } else {
-            // segment yoksa index zorunlu
+            // segment yoksa index methodu olmalı
             if (!method_exists($instance, 'index')) {
                 http_response_code(404);
                 require_once CORE . SEP . "error.php";
@@ -193,18 +218,13 @@ class app
 
     private function get_param($param = [])
     {
-        // URI parametreleri (segments)
         $uri_params = [];
-        if (is_array($this->segments)) {
-            foreach ($this->segments as $key => $value) {
-                // normalize segments to string and expose as uri_0, uri_1, ...
-                $uri_params['uri_' . $key] = is_null($value) ? '' : (string) $value;
-            }
+        $segments = is_array($this->segments) ? array_values($this->segments) : [];
+        foreach ($segments as $i => $v) {
+            $uri_params[$i] = is_null($v) ? '' : (string) $v;
         }
 
-        // Return URI params without enforcing numeric-only values.
-        $param = array_merge($param, $uri_params);
-        return $param;
+        return array_merge($param, $uri_params);
     }
 
     private function get_current_path()
