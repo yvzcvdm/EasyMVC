@@ -152,27 +152,38 @@ class app
             exit;
         }
         
-        // Method adını belirle
-        $method = !empty($remaining_segments) ? array_shift($remaining_segments) : 'index';
-        $method = init::slug($method);
-        
-        // Method adı validate et
-        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $method)) {
-            $method = 'index';
-        }
-        
-        // Sınıfı instantiate et ve method kontrolü
+        // Method adını belirle. Eğer candidate numeric/invalid veya method yoksa
+        // candidate parametre olarak geri konulacak ve 'index' methodu kullanılacaktır.
+        $method = 'index';
+        // instantiate controller once for method checks
         $instance = new $this->controller_class([]);
-        
-        if (!method_exists($instance, $method)) {
-            $method = 'index';
-            
-            // index method bile yok mu?
+
+        if (!empty($remaining_segments)) {
+            $candidate = array_shift($remaining_segments);
+            $candidate = init::slug($candidate);
+
+            // Eğer candidate geçerli bir method ismi formatındaysa ve sınıfta varsa kullan
+            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $candidate) && method_exists($instance, $candidate)) {
+                $method = $candidate;
+            } else {
+                // Aksi halde candidate parametre olarak geri konulsun
+                array_unshift($remaining_segments, $candidate);
+                // index methodu yoksa 404
+                if (!method_exists($instance, 'index')) {
+                    http_response_code(404);
+                    require_once CORE . SEP . "error.php";
+                    exit;
+                }
+                $method = 'index';
+            }
+        } else {
+            // segment yoksa index zorunlu
             if (!method_exists($instance, 'index')) {
                 http_response_code(404);
                 require_once CORE . SEP . "error.php";
                 exit;
             }
+            $method = 'index';
         }
         
         $this->method_name = $method;
