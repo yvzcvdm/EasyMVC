@@ -214,7 +214,6 @@ class app
         return [
             "app" => [
                 "root" => $this->root,
-                "controller_class" => $this->controller_class,
                 "method" => $this->method_name,
                 "uri" => $this->uri,
                 "folder" => $this->get_current_path(),
