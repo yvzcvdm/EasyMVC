@@ -1,5 +1,5 @@
 <div class="content">
-    <h3 class="debug-title">Debug Bilgileri</h3>
+    <h3 class="debug-title">Debug Information</h3>
     <table class="debug-table">
         <tr class="debug-header">
             <th class="debug-th">Key</th>

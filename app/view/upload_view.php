@@ -8,12 +8,12 @@
                 <form class="form_upload" action="<?= $app["uri"] ?>" method="post" enctype="multipart/form-data">
                     <table>
                         <tr>
-                            <td>Dosya(lar) Seç</td>
+                            <td>Select File(s)</td>
                             <td><input type="file" name="file_input[]" multiple></td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td><input type="submit" value="Gönder"></td>
+                            <td><input type="submit" value="Submit"></td>
                         </tr>
                     </table>
                 </form>
@@ -54,15 +54,15 @@
 
     </div>
     <div class="content">
-        <h3>Yükleme Sonuçları</h3>
+        <h3>Upload Results</h3>
         <div style="border:1px solid #D0D0D0; background:#f9f9f9; padding:10px; margin-top:10px;">
         <?php if (!empty($list_upload)): ?>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                 <thead>
                     <tr style="background-color: #f5f5f5;">
-                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">Dosya</th>
-                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">Durum</th>
-                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">Detay</th>
+                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">File</th>
+                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">Status</th>
+                        <th style="border: 1px solid #ddd; padding: 5px 10px; text-align: left; font-weight: bold;">Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,9 +71,9 @@
                             <td style="border: 1px solid #ddd; padding: 12px;"><?= htmlspecialchars($item['file'] ?? 'N/A') ?></td>
                             <td style="border: 1px solid #ddd; padding: 12px;">
                                 <?php if ($item['status'] === 'success'): ?>
-                                    <span style="color: #4caf50; font-weight: bold;">✓ Başarılı</span>
+                                    <span style="color: #4caf50; font-weight: bold;">✓ Successful</span>
                                 <?php else: ?>
-                                    <span style="color: #f44336; font-weight: bold;">❌ Hata</span>
+                                    <span style="color: #f44336; font-weight: bold;">❌ Error</span>
                                 <?php endif; ?>
                             </td>
                             <td style="border: 1px solid #ddd; padding: 12px;">
@@ -90,7 +90,7 @@
                 </tbody>
             </table>
         <?php else: ?>
-            <p style="color: #999; text-align: center; padding: 20px;">Henüz dosya yüklenmedi.</p>
+            <p style="color: #999; text-align: center; padding: 20px;">No files have been uploaded yet.</p>
         <?php endif; ?>
         </div>
     </div>

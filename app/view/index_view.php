@@ -10,7 +10,7 @@
                     <table>
                         <tr>
                             <td colspan="2" style="text-align: center;">
-                                <h3>Örnek Form</h3>
+                                <h3>Sample Form</h3>
                             </td>
                         </tr>
                         <tr>
