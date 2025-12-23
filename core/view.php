@@ -35,7 +35,8 @@
         elseif (isset($data["app"]["get"]["view_html"]))
             return self::html($path, $data) . die();
 
-        ob_start(array("view", "sanitize_output"));
+        // ob_start(array("view", "sanitize_output"));
+        ob_start();
         header('Content-Type:text/html; charset=UTF-8');
         extract($data, EXTR_SKIP);
         if (file_exists(LAYOUT . SEP . 'header.php'))
@@ -56,12 +57,8 @@
 
     public static function json($data)
     {
-        ob_start(array("view", "sanitize_output"));
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
-        ob_end_flush();
-        $view = ob_get_contents();
-        return $view;
-        ob_end_clean();
+        exit;
     }
 }

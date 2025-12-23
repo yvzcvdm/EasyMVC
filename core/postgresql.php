@@ -14,15 +14,19 @@
 					$db_config['db_user'],
 					$db_config['db_pass'],
 					[
-						PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+						PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
 						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 					]
 				);
 				$this->postgresql->exec("SET client_encoding = 'UTF8'");
 				self::$instance = $this;
 			} catch (PDOException $e) {
-				// die("Veritabanı bağlantı hatası: " . $e->getMessage());	
+				error_log('Postgres connection error: ' . $e->getMessage());
+				$this->postgresql = null;
 			}
+		} else {
+			// Eğer zaten bir instance varsa, var olan PDO bağlantısını yeni nesneye kopyala
+			$this->postgresql = self::$instance->postgresql;
 		}
 	}
 
@@ -36,8 +40,39 @@
 
 	public function query($sql, $params = [])
 	{
+		if ($this->postgresql === null) {
+			return [
+				"column" => [],
+				"columnCount" => 0,
+				"error" => ["00000", 0, "No database connection"],
+				"dataCount" => 0,
+				"data" => []
+			];
+		}
+
 		$stmt = $this->postgresql->prepare($sql);
-		$stmt->execute($params);
+		if ($stmt === false) {
+			$err = $this->postgresql->errorInfo();
+			return [
+				"column" => [],
+				"columnCount" => 0,
+				"error" => $err,
+				"dataCount" => 0,
+				"data" => []
+			];
+		}
+
+		$ok = $stmt->execute($params);
+		if ($ok === false) {
+			$err = $stmt->errorInfo();
+			return [
+				"column" => [],
+				"columnCount" => 0,
+				"error" => $err,
+				"dataCount" => 0,
+				"data" => []
+			];
+		}
 
 		return [
 			"column" => $this->columnList($stmt),

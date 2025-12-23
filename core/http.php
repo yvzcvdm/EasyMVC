@@ -273,11 +273,8 @@ class http
 
         if ($response === false) {
             $this->last_error = curl_error($this->curl);
-            curl_close($this->curl);
             return $this->formatResponse(null, false);
         }
-
-        curl_close($this->curl);
 
         $decoded_response = $this->parseResponse($response);
         
@@ -335,12 +332,5 @@ class http
     public function isSuccess()
     {
         return $this->response_code >= 200 && $this->response_code < 300;
-    }
-
-    public function __destruct()
-    {
-        if (is_resource($this->curl)) {
-            curl_close($this->curl);
-        }
     }
 }

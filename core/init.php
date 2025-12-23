@@ -11,17 +11,16 @@
 		$str = preg_replace('/[^%a-zA-Z0-9 _-]/', '', $str);
 		$str = preg_replace('/\s+/', '-', $str);
 		$str = preg_replace('|-+|', '-', $str);
-		$str = trim($str, '-');
+		$str = trim((string)$str, '-');
 		$str = strtolower($str);
 		return $str;
 	}
 
     function text_short($text, $chars_limit)
 	{
-		$text = (string) $text;
 		if (strlen($text) > $chars_limit) {
 			$new_text = substr($text, 0, $chars_limit);
-			$new_text = trim((string) $new_text);
+				$new_text = trim((string)$new_text);
 			return $new_text . "...";
 		} else {
 			return $text;
@@ -31,8 +30,7 @@
 	public static function array_clear($array)
 	{
 		array_walk_recursive($array, function (&$item) {
-			$item = (string) $item;
-			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
+			$item = htmlspecialchars(addslashes(stripslashes(trim((string)$item))));
 		});
 		return $array;
 	}
@@ -83,7 +81,7 @@
 
 	public function valid_email($e)
 	{
-		return (bool)preg_match("`^[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`i", trim((string) $e));
+		return (bool)preg_match("`^[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`i", trim((string)$e));
 	}
 
 	public function valid_password($password)
@@ -150,6 +148,103 @@
 		$mail->Subject($subject);
 		$mail->Body($content);
 		return $mail->Send() ? true : false;
+	}
+
+	public static function translate($key)
+	{
+		static $lang_key = $_COOKIE['lang'] ?? 'de';
+		static $cache = null;
+		$requested = (string)$lang_key;
+		$key = (string)$key; 
+
+		// İlk çağırmada tüm JSON dosyalarını yükle ve dil adına göre cache'le
+		if ($cache === null) {
+			$cache = [];
+			// Eğer ana dizin `ROOT` olarak tanımlandıysa onu kullan, değilse __DIR__ üzerinden hesapla
+			$dir = realpath(rtrim(ROOT, '/\\') . '/public/local');
+			if ($dir && is_dir($dir)) {
+				foreach (glob($dir . '/*.json') as $file) {
+					$name = pathinfo($file, PATHINFO_FILENAME);
+					$content = @file_get_contents($file);
+					$json = @json_decode($content, true);
+					if (is_array($json)) {
+						$cache[$name] = $json;
+					}
+				}
+			}
+		}
+
+		// Eğer hiç dil dosyası yoksa çık
+		if (empty($cache)) {
+			return '';
+		}
+
+		// Normalize talep edilen dil (eğer verildiyse)
+		$requested = strtolower(preg_replace('/[^a-z]/', '', (string)$requested));
+
+		// Karar verme sırası:
+		// 1) Eğer fonksiyona açıkça geçilmiş ve mevcutsa onu kullan
+		// 2) Eğer cookie'de `lang` varsa ve destekleniyorsa onu kullan
+		// 3) Tarayıcı `Accept-Language` başlığına göre ilk uygun dili kullan
+		// 4) Cache içindeki ilk dili kullan (fallback)
+
+		$lang = '';
+
+		if ($requested !== '' && isset($cache[$requested])) {
+			$lang = $requested;
+		}
+
+		if ($lang === '') {
+			$cookieLang = '';
+			if (!empty($_COOKIE['lang'])) {
+				$cookieLang = strtolower(preg_replace('/[^a-z]/', '', (string)$_COOKIE['lang']));
+			}
+			if ($cookieLang !== '' && isset($cache[$cookieLang])) {
+				$lang = $cookieLang;
+			}
+		}
+
+		if ($lang === '') {
+			$accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+			if ($accept !== '') {
+				// Örnek: "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
+				$parts = preg_split('/[,;]/', $accept);
+				foreach ($parts as $p) {
+					$p = trim($p);
+					if ($p === '') continue;
+					// alttaki pattern ile önceki kısmı al (örn tr-TR -> tr)
+					$code = strtolower(explode('-', $p)[0]);
+					$code = preg_replace('/[^a-z]/', '', $code);
+					if ($code !== '' && isset($cache[$code])) {
+						$lang = $code;
+						break;
+					}
+				}
+			}
+		}
+
+		if ($lang === '') {
+			// fallback: cache içindeki ilk anahtar
+			$keys = array_keys($cache);
+			$lang = $keys[0];
+		}
+
+		$node = $cache[$lang] ?? [];
+
+		if ($key === '') {
+			return is_array($node) ? '' : (string)$node;
+		}
+
+		$parts = explode('.', $key);
+		foreach ($parts as $part) {
+			if (is_array($node) && array_key_exists($part, $node)) {
+				$node = $node[$part];
+			} else {
+				return '';
+			}
+		}
+
+		return is_array($node) ? '' : (string)$node;
 	}
 
 }
