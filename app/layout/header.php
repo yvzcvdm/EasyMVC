@@ -7,7 +7,7 @@
     <link rel="icon" type="image/x-icon" href="<?= $app["root"] ?>public/images/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title ?></title>
-    <link rel="stylesheet" href="<?= $app["root"] ?>public/css/style.css">
+    <link rel="stylesheet" href="<?= $app["root"] ?>public/css/style.css?v=1">
 </head>
 
 <body>

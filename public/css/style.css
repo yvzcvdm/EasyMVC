@@ -227,6 +227,8 @@ td .debug-key {
     border: 1px solid #34495e;
     padding: 1px 6px;
     color: #2c3e50;
+max-width:300px;
+word-wrap:break-word;
 }
 
 .debug-table-nested {
