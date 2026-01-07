@@ -31,7 +31,7 @@ EasyMVC'nin kalbi, tamamen otomatik ve klasör-tabanlı routing sistemidir. **ZE
 URL Pattern:
 http://example.com/[controller]/[method]/[param1]/[param2]/[param3]/...
                    └─────┬────┘ └───┬──┘ └──────────┬──────────────┘
-                      Dosya      Method       URI Parametreleri
+                  Klasör/Dosya    Method       URI Parametreleri
                                               ($data["uri_0"], $data["uri_1"], ...)
 ```
 
