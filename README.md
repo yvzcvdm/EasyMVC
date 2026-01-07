@@ -23,29 +23,238 @@ EasyMVC'nin temel prensibi: **"Minimal, Sade, Hızlı, Güçlü"**
 ## 📋 Özellikler
 
 ### 1. **Otomatik Routing Sistemi**
-EasyMVC'nin kalbi, tamamen otomatik ve klasör-tabanlı routing sistemidir. URL yapınız direkt olarak dosya yapınıza karşılık gelir:
+EasyMVC'nin kalbi, tamamen otomatik ve klasör-tabanlı routing sistemidir. **ZERO CONFIG** - Hiçbir route tanımı yazmadan, sadece klasör ve dosya oluşturarak çalışır!
+
+#### 🎯 Temel Routing Mantığı
 
 ```
-URL Yapısı:
-http://example.com/[controller]/[method]/[param1]/[param2]/...
-
-Dosya Yapısı:
-app/controller/[controller]/[method].php ← otomatik yüklenir
-                          ↓
-                    /app/controller/blog.php
-                    /app/controller/admin/user.php
-                    
-Örnek Rota:
-http://example.com/blog              → app/controller/blog.php → index() metodu
-http://example.com/blog/detail/5     → app/controller/blog.php → detail() metodu (param: 5)
-http://example.com/admin/user/edit   → app/controller/admin/user.php → edit() metodu
+URL Pattern:
+http://example.com/[controller]/[method]/[param1]/[param2]/[param3]/...
+                   └─────┬────┘ └───┬──┘ └──────────┬──────────────┘
+                      Dosya      Method       URI Parametreleri
+                                              ($data["uri_0"], $data["uri_1"], ...)
 ```
 
-**Yapı Tabanlı Otomatik Yönlendirme Avantajları:**
-- Hiçbir route tanımlamasına gerek yok
-- Klasör yapısı artarken routes otomatik oluşur
-- SEO-friendly URL yapısı
-- Bakım ve geliştirme kolaylığı
+#### 📂 Dosya ve URL İlişkisi
+
+```
+Dizin Yapısı                           URL                              Çalışan Method
+──────────────────────────────────────────────────────────────────────────────────────────
+app/controller/index.php           → example.com/                    → index::index()
+app/controller/blog.php            → example.com/blog                → blog::index()
+app/controller/blog.php            → example.com/blog/detail/5       → blog::detail()
+app/controller/admin/user.php      → example.com/admin/user         → admin_user::index()
+app/controller/admin/user.php      → example.com/admin/user/edit/10 → admin_user::edit()
+app/controller/api/v1/product.php  → example.com/api/v1/product     → api_v1_product::index()
+```
+
+#### 🔄 Routing Akışı (Adım Adım)
+
+**1. Basit Controller Çağrısı:**
+```
+URL: http://example.com/blog
+
+Akış:
+1. index.php URL'yi parse eder → "blog"
+2. app/controller/blog.php dosyasını arar
+3. blog class'ını yükler
+4. index() methodunu çalıştırır (varsayılan method)
+5. $data array'i method'a parametre olarak gönderilir
+
+Controller:
+class blog {
+    public function index($data) {
+        // $data["app"] içinde tüm sistem bilgileri
+        // $data["uri_0"], $data["uri_1"] gibi parametreler
+        view::layout("blog", $data);
+    }
+}
+```
+
+**2. Method ile Çağrı:**
+```
+URL: http://example.com/blog/detail/5
+
+Akış:
+1. URL parse → controller: "blog", method: "detail", params: ["5"]
+2. app/controller/blog.php yükle
+3. blog class'ı içinde detail() methodunu çağır
+4. "5" parametresi $data["uri_0"] olarak gelir
+
+Controller:
+class blog {
+    public function detail($data) {
+        $post_id = $data["uri_0"];  // "5"
+        // Detay sayfası mantığı...
+        view::layout("blog_detail", $data);
+    }
+}
+```
+
+**3. Alt Klasör (Nested) Routing:**
+```
+URL: http://example.com/admin/user/edit/10
+
+Akış:
+1. URL parse → path: "admin/user", method: "edit", params: ["10"]
+2. app/controller/admin/user.php yükle
+3. Class adı: admin_user (klasör adı + dosya adı, underscore ile)
+4. edit() methodunu çağır
+
+Dosya: app/controller/admin/user.php
+class admin_user {
+    public function edit($data) {
+        $user_id = $data["uri_0"];  // "10"
+        // Kullanıcı düzenleme...
+        view::layout("admin/user_edit", $data);
+    }
+}
+```
+
+**4. Çoklu Parametre:**
+```
+URL: http://example.com/shop/product/detail/electronics/laptop/15
+
+Akış:
+1. controller: shop/product
+2. method: detail
+3. params: ["electronics", "laptop", "15"]
+
+Controller:
+class shop_product {
+    public function detail($data) {
+        $category = $data["uri_0"];     // "electronics"
+        $subcategory = $data["uri_1"]; // "laptop"
+        $product_id = $data["uri_2"];  // "15"
+        
+        // Ürün detay mantığı...
+        view::layout("shop/product_detail", $data);
+    }
+}
+```
+
+#### ⚙️ Varsayılan Davranışlar
+
+| Durum | Davranış | Örnek |
+|-------|----------|-------|
+| **URL: /** | `app/controller/index.php` → `index::index()` | Ana sayfa |
+| **Method belirtilmemiş** | `index()` methodu çağrılır | `/blog` → `blog::index()` |
+| **Method yok** | 404 hatası | `/blog/notfound` → 404 |
+| **Controller yok** | 404 hatası | `/notexist` → 404 |
+| **Parametre yok** | `$data["uri_X"]` null/undefined | `/blog/detail` → `uri_0` yok |
+
+#### 🎨 Class Adlandırma Kuralları
+
+```
+Dosya Yolu                        Class Adı           Açıklama
+─────────────────────────────────────────────────────────────────────────────
+app/controller/blog.php       →  blog                Basit controller
+app/controller/user_post.php  →  user_post           Alt çizgi korunur
+app/controller/admin/user.php →  admin_user          Klasör + dosya, underscore
+app/controller/api/v1/auth.php → api_v1_auth         Çok seviyeli klasör
+app/controller/Admin/User.php →  Admin_User          Büyük harf korunur (önerilmez)
+```
+
+#### 🚦 Routing Örnekleri (Gerçek Hayat Senaryoları)
+
+**E-Ticaret Sitesi:**
+```
+URL                                    Dosya                              Method
+────────────────────────────────────────────────────────────────────────────────────
+/                                  → app/controller/index.php         → index()
+/products                          → app/controller/products.php      → index()
+/products/detail/123               → app/controller/products.php      → detail()
+/products/category/electronics     → app/controller/products.php      → category()
+/cart                              → app/controller/cart.php          → index()
+/cart/add/123                      → app/controller/cart.php          → add()
+/checkout                          → app/controller/checkout.php      → index()
+/user/profile                      → app/controller/user.php          → profile()
+/user/orders                       → app/controller/user.php          → orders()
+/admin/dashboard                   → app/controller/admin/dashboard.php → index()
+/admin/products/edit/123           → app/controller/admin/products.php  → edit()
+```
+
+**Blog Sistemi:**
+```
+/                                  → Anasayfa
+/blog                              → Blog listesi
+/blog/post/my-first-post           → Tek yazı (slug ile)
+/blog/category/technology          → Kategori
+/blog/author/john-doe              → Yazar sayfası
+/blog/search                       → Arama (GET: ?q=keyword)
+/admin/posts                       → Admin: yazı listesi
+/admin/posts/create                → Admin: yeni yazı
+/admin/posts/edit/15               → Admin: yazı düzenle
+```
+
+**RESTful API:**
+```
+URL                                Method (HTTP)     Controller Method
+────────────────────────────────────────────────────────────────────────
+/api/users                         GET          →    api_users::index()
+/api/users/123                     GET          →    api_users::show()
+/api/users                         POST         →    api_users::create()
+/api/users/123                     PUT/PATCH    →    api_users::update()
+/api/users/123                     DELETE       →    api_users::delete()
+
+Controller'de HTTP method kontrolü:
+public function show($data) {
+    if ($data["app"]["method"] !== "GET") {
+        http_response_code(405);
+        echo json_encode(["error" => "Method not allowed"]);
+        return;
+    }
+    // GET işlemi...
+}
+```
+
+#### 💡 Routing Avantajları
+
+✅ **Zero Configuration** - Hiçbir route dosyası yok!
+✅ **Dosya = Route** - Klasör yapısı direkt URL yapısıdır
+✅ **SEO Friendly** - Temiz ve anlamlı URL'ler
+✅ **Ölçeklenebilir** - Sınırsız depth desteği
+✅ **Bakım Kolay** - Dosya ekle/sil = Route ekle/sil
+✅ **Anlaşılır** - Developer URL'ye bakarak dosyayı bilir
+✅ **Hızlı** - Route parse overhead'i minimum
+
+#### ⚠️ Dikkat Edilmesi Gerekenler
+
+```php
+// ❌ YANLIŞ: Method parametresiz
+class blog {
+    public function index() {  // $data yok!
+        // Hata!
+    }
+}
+
+// ✅ DOĞRU: Method her zaman $data parametresi alır
+class blog {
+    public function index($data) {
+        // Doğru kullanım
+    }
+}
+
+// ❌ YANLIŞ: Class adı dosya adından farklı
+// Dosya: app/controller/blog.php
+class BlogController {  // Yanlış class adı
+}
+
+// ✅ DOĞRU: Class adı dosya adı ile aynı
+// Dosya: app/controller/blog.php
+class blog {  // Doğru class adı
+}
+
+// ❌ YANLIŞ: Alt klasör class adı yanlış
+// Dosya: app/controller/admin/user.php
+class user {  // Eksik prefix!
+}
+
+// ✅ DOĞRU: Alt klasör + dosya adı
+// Dosya: app/controller/admin/user.php
+class admin_user {  // Klasör_dosya formatı
+}
+```
 
 ---
 
@@ -139,10 +348,19 @@ Layout dosyası (app/layout/header.php ve footer.php):
 
 ### 5. **Global $app Array'i - Tüm Veriye Erişim**
 
-**Tüm uygulama parametreleri tek bir array'de:**
+**Framework'ün kalbi:** Her HTTP isteğinde otomatik oluşturulan ve tüm controller method'larına parametre olarak geçilen `$app` array'i.
+
+#### 📦 $app Array Yapısı
+
+`$app` array'i, controller method'larına `$data["app"]` olarak gelir ve HTTP isteği hakkında tüm bilgileri içerir:
 
 ```php
-// Controller ve View'de her yerde erişilebilir:
+// Controller method signature:
+public function index($data) {
+    $app = $data["app"];  // Global app array'ine erişim
+}
+
+// $app array yapısı:
 $app = [
     // Routing Bilgileri
     "root"      => "/",                        // Site root path
@@ -1180,8 +1398,180 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
 ---
 
+## � Gelişmiş Routing Senaryoları
+
+### API Endpoint Oluşturma
+
+```php
+// app/controller/api/users.php
+class api_users
+{
+    public function index($data)
+    {
+        // GET /api/users - Tüm kullanıcılar
+        $method = $data["app"]["method"];
+        
+        if ($method !== "GET") {
+            http_response_code(405);
+            echo json_encode(["error" => "Method not allowed"]);
+            return;
+        }
+        
+        $users = [/* DB'den kullanıcılar */];
+        echo json_encode(["success" => true, "data" => $users]);
+    }
+    
+    public function show($data)
+    {
+        // GET /api/users/5 - Tek kullanıcı
+        $user_id = $data["uri_0"];
+        $user = [/* DB'den kullanıcı */];
+        echo json_encode(["success" => true, "data" => $user]);
+    }
+    
+    public function create($data)
+    {
+        // POST /api/users - Yeni kullanıcı
+        $post_data = $data["app"]["post"];
+        // Kullanıcı oluştur...
+        echo json_encode(["success" => true, "message" => "User created"]);
+    }
+}
+```
+
+### Multi-tenant Routing
+
+```php
+// URL: example.com/client1/dashboard
+// app/controller/client/dashboard.php
+
+class client_dashboard
+{
+    public function index($data)
+    {
+        // uri_0 yoksa "client" kelimesinden sonraki segment
+        $client_slug = $data["app"]["path"];
+        // client_slug = "client1"
+        
+        // Client'a özel dashboard
+        $data["client"] = $this->get_client_by_slug($client_slug);
+        view::layout("client/dashboard", $data);
+    }
+}
+```
+
+### Dinamik Sayfalama
+
+```php
+// URL: example.com/blog/page/2
+// app/controller/blog.php
+
+class blog
+{
+    public function page($data)
+    {
+        $page_number = intval($data["uri_0"] ?? 1);
+        $per_page = 10;
+        $offset = ($page_number - 1) * $per_page;
+        
+        $posts = $this->blog_model->get_posts($offset, $per_page);
+        $data["posts"] = $posts;
+        $data["current_page"] = $page_number;
+        
+        view::layout("blog", $data);
+    }
+}
+```
+
+### Slug-based Routing
+
+```php
+// URL: example.com/blog/easymvc-framework-nedir
+// app/controller/blog.php
+
+class blog
+{
+    public function index($data)
+    {
+        // Eğer uri_0 varsa, bu bir slug olabilir
+        if (isset($data["uri_0"])) {
+            $slug = $data["uri_0"];
+            $post = $this->blog_model->get_post_by_slug($slug);
+            
+            if ($post) {
+                $data["post"] = $post;
+                view::layout("blog_detail", $data);
+                return;
+            }
+        }
+        
+        // Varsayılan: liste göster
+        $data["posts"] = $this->blog_model->get_posts();
+        view::layout("blog_list", $data);
+    }
+}
+```
+
+### File Download Routing
+
+```php
+// URL: example.com/download/file/invoice-2024.pdf
+// app/controller/download.php
+
+class download
+{
+    public function file($data)
+    {
+        $filename = $data["uri_0"];
+        $filepath = "/public/uploads/" . $filename;
+        
+        if (file_exists($filepath)) {
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            readfile($filepath);
+            exit;
+        }
+        
+        http_response_code(404);
+        echo "Dosya bulunamadı";
+    }
+}
+```
+
+---
+
+## 📚 Ek Kaynaklar
+
+- **HTTP Client Dokümantasyonu:** [HTTP_README.md](HTTP_README.md)
+- **Dosya Yükleme Detayları:** [FILE_README.md](FILE_README.md)
+- **Veritabanı Kullanımı:** [DATABASE_README.md](DATABASE_README.md)
+
+---
+
+## ❓ Sık Sorulan Sorular
+
+**S: Route dosyası nerede?**
+C: EasyMVC'de route dosyası yoktur. Klasör yapınız route'larınızdır.
+
+**S: Dinamik route nasıl oluştururum?**
+C: Controller method'unda `$data["uri_0"]`, `$data["uri_1"]` gibi parametreleri kullanın.
+
+**S: 404 sayfası nasıl özelleştirilir?**
+C: `core/error.php` dosyasını düzenleyin.
+
+**S: RESTful API yapabilir miyim?**
+C: Evet! `$data["app"]["method"]` ile HTTP method'unu kontrol edin.
+
+**S: Alt klasörde controller oluştururken class adı?**
+C: Klasör adı + dosya adı, underscore ile: `admin/user.php` → `class admin_user`
+
+---
+
 ## 👨‍💻 Hakkında
 
 EasyMVC, maksimum verimlilik ile minimum kompleksiteyi hedefleyen bir framework'tür. Modular yapısı sayesinde siz de özel core dosyalarınızı ekleyerek framework'u genişletebilirsiniz.
 
 **Framework Felsefesi:** "Keep it Simple, Keep it Fast"
+
+**Geliştirici:** [@yvzcvdm](https://github.com/yvzcvdm)
+**Repository:** [github.com/yvzcvdm/EasyMVC](https://github.com/yvzcvdm/EasyMVC)
