@@ -136,23 +136,62 @@ class user {
 ```
 
 **4. Çoklu Parametre:**
+
+**⚠️ ÖNEMLİ:** Parametreler sadece **rakam (numeric)** olabilir! String değerler method olarak algılanır ve 404 hatası verir.
+
 ```
-URL: http://example.com/shop/product/detail/electronics/laptop/15
+✅ DOĞRU - Rakam parametreler:
+URL: http://example.com/blog/detail/5/10/15
+     → controller: blog, method: detail
+     → params: [5, 10, 15]
+
+❌ YANLIŞ - String parametreler:
+URL: http://example.com/blog/detail/electronics/laptop/15
+     → Framework "electronics"i method olarak arar
+     → Method bulunamadığı için 404 hatası verir!
+
+✅ ÇÖZÜM - ID ile Slug kullanımı:
+URL: http://example.com/product/detail/15
+     → ID ile ürünü çek, slug'ı göster
+```
+
+**Örnek: Çoklu Rakam Parametre**
+```
+URL: http://example.com/blog/detail/5/10
 
 Akış:
-1. controller: shop/product
+1. controller: blog
 2. method: detail
-3. params: ["electronics", "laptop", "15"]
+3. params: ["5", "10"]
 
 Controller:
-class shop_product {
+class blog {
     public function detail($data) {
-        $category = $data["uri_0"];     // "electronics"
-        $subcategory = $data["uri_1"]; // "laptop"
-        $product_id = $data["uri_2"];  // "15"
+        $post_id = intval($data["uri_0"]);      // 5
+        $comment_id = intval($data["uri_1"]);  // 10
         
-        // Ürün detay mantığı...
-        view::layout("shop/product_detail", $data);
+        // Post ve yorum detayı...
+        view::layout("blog_detail", $data);
+    }
+}
+```
+
+**String Değerler İçin Slug Yöntemi:**
+```
+URL: http://example.com/blog/post/15-easymvc-framework-nedir
+     → Sadece ID'yi (15) kullan, slug kısmı SEO için
+
+Controller:
+class blog {
+    public function post($data) {
+        $slug_with_id = $data["uri_0"];  // "15-easymvc-framework-nedir"
+        
+        // ID'yi ayır
+        $id = intval(explode('-', $slug_with_id)[0]);  // 15
+        
+        // ID ile veritabanından çek
+        $post = $this->blog_model->get_post($id);
+        view::layout("blog_post", $data);
     }
 }
 ```
