@@ -5,8 +5,8 @@
     <li><a href="<?= $app["root"] ?>upload">Upload</a></li>
     <li><a href="<?= $app["root"] ?>login">Login</a>
         <ul>
-            <li><a href="<?= $app["root"] ?>login/register">Add</a></li>
-            <li><a href="<?= $app["root"] ?>login/iforgot">Edit</a></li>
+            <li><a href="<?= $app["root"] ?>login/register">Register</a></li>
+            <li><a href="<?= $app["root"] ?>login/iforgot">Forgot Password</a></li>
         </ul>
     </li>
     <li>
