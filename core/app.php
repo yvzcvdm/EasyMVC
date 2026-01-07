@@ -152,8 +152,8 @@ class app
             exit;
         }
 
-        // Method adını belirle.
-        $instance = new $this->controller_class([]);
+        // Method adını belirle - Reflection ile kontrol et (örnekleme yapmadan)
+        $reflection = new ReflectionClass($this->controller_class);
         $method = 'index';
 
         if (!empty($remaining_segments)) {
@@ -161,7 +161,7 @@ class app
             $candidate = init::slug($candidate);
 
             // Eğer candidate geçerli bir method ismi formatındaysa ve sınıfta varsa kullan
-            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $candidate) && method_exists($instance, $candidate)) {
+            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $candidate) && $reflection->hasMethod($candidate)) {
                 $method = $candidate;
 
                 // Kalan parametreler yalnızca rakamlardan oluşmalı
@@ -188,7 +188,7 @@ class app
                     }
 
                     // index methodu olmalı
-                    if (!method_exists($instance, 'index')) {
+                    if (!$reflection->hasMethod('index')) {
                         http_response_code(404);
                         require_once CORE . SEP . "error.php";
                         exit;
@@ -203,7 +203,7 @@ class app
             }
         } else {
             // segment yoksa index methodu olmalı
-            if (!method_exists($instance, 'index')) {
+            if (!$reflection->hasMethod('index')) {
                 http_response_code(404);
                 require_once CORE . SEP . "error.php";
                 exit;
@@ -378,7 +378,8 @@ class app
             try {
                 $instance = new $this->controller_class($this->params);
                 if ($this->method_name && method_exists($instance, $this->method_name)) {
-                    call_user_func([$instance, $this->method_name], (array) $this->params);
+                    // Method'u direkt çağır, call_user_func gereksiz
+                    $instance->{$this->method_name}($this->params);
                     $this->error = false;
                 }
             } catch (Exception $e) {

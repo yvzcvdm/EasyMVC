@@ -3,35 +3,32 @@
 	public $sqlite;
 	private static $instance = null;
 
-	public function __construct()
+	private function __construct()
 	{
-		if (self::$instance === null) {
-			$config = app::get_config();
-			$db_config = isset($config['sqlite']) ? $config['sqlite'] : $config;
-			
-			// SQLite database path
-			$db_dir = ROOT . SEP . 'database';
-			if (!is_dir($db_dir)) {
-				mkdir($db_dir, 0755, true);
-			}
-			
-			$db_path = $db_dir . SEP . ($db_config['db_name'] ?? 'app') . '.db';
-			
-			try {
-				$this->sqlite = new PDO(
-					"sqlite:" . $db_path,
-					null,
-					null,
-					[
-						PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
-						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-					]
-				);
-				$this->sqlite->exec("PRAGMA foreign_keys = ON");
-				self::$instance = $this;
-			} catch (PDOException $e) {
-				// error_log("SQLite bağlantı hatası: " . $e->getMessage());	
-			}
+		$config = app::get_config();
+		$db_config = isset($config['sqlite']) ? $config['sqlite'] : $config;
+		
+		// SQLite database path
+		$db_dir = ROOT . SEP . 'database';
+		if (!is_dir($db_dir)) {
+			mkdir($db_dir, 0755, true);
+		}
+		
+		$db_path = $db_dir . SEP . ($db_config['db_name'] ?? 'app') . '.db';
+		
+		try {
+			$this->sqlite = new PDO(
+				"sqlite:" . $db_path,
+				null,
+				null,
+				[
+					PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+				]
+			);
+			$this->sqlite->exec("PRAGMA foreign_keys = ON");
+		} catch (PDOException $e) {
+			// error_log("SQLite bağlantı hatası: " . $e->getMessage());	
 		}
 	}
 

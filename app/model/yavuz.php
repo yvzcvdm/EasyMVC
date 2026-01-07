@@ -3,7 +3,7 @@
     private $mysql;
     public function __construct()
     {
-        $this->mysql = new mysql();
+        $this->mysql = mysql::getInstance();
     }
     public function index($p = null)
     {

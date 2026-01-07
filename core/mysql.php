@@ -3,26 +3,23 @@
 	public $mysql;
 	private static $instance = null;
 
-	public function __construct()
+	private function __construct()
 	{
-		if (self::$instance === null) {
-			$config = app::get_config();
-			$db_config = isset($config['mysql']) ? $config['mysql'] : $config;
-			try {
-				$this->mysql = new PDO(
-					"mysql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];charset=utf8mb4",
-					$db_config['db_user'],
-					$db_config['db_pass'],
-					[
-						PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
-						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-					]
-				);
-				$this->mysql->exec("SET NAMES utf8mb4");
-				self::$instance = $this;
-			} catch (PDOException $e) {
-				// die("Veritabanı bağlantı hatası: " . $e->getMessage());	
-			}
+		$config = app::get_config();
+		$db_config = isset($config['mysql']) ? $config['mysql'] : $config;
+		try {
+			$this->mysql = new PDO(
+				"mysql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];charset=utf8mb4",
+				$db_config['db_user'],
+				$db_config['db_pass'],
+				[
+					PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+				]
+			);
+			$this->mysql->exec("SET NAMES utf8mb4");
+		} catch (PDOException $e) {
+			// die("Veritabanı bağlantı hatası: " . $e->getMessage());	
 		}
 	}
 

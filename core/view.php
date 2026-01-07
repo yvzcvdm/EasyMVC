@@ -1,5 +1,15 @@
 <?php class view
-{
+{    // Dosya varlık cache'i - her istekte aynı dosyaları tekrar kontrol etme
+    private static $file_cache = [];
+
+    private static function file_exists_cached($path)
+    {
+        if (!isset(self::$file_cache[$path])) {
+            self::$file_cache[$path] = file_exists($path);
+        }
+        return self::$file_cache[$path];
+    }
+
     private static function sanitize_output($buffer)
     {
         $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');
@@ -11,21 +21,21 @@
     public static function html($path, $data)
     {
         if (isset($data["app"]["get"]["view_json"]))
-            return self::json($data) . die();
+            return self::json($data);
         elseif (isset($data["app"]["get"]["view_layout"]))
-            return self::layout($path, $data) . die();
+            return self::layout($path, $data);
 
         ob_start(array("view", "sanitize_output"));
         header('Content-Type:text/html; charset=UTF-8');
         extract($data, EXTR_SKIP);
-        if (file_exists(VIEW . '/' . $path . '_view.php'))
-            require VIEW . '/' . $path . '_view.php';
+
+        $view_path = VIEW . '/' . $path . '_view.php';
+        if (self::file_exists_cached($view_path))
+            require $view_path;
         else
             print("View file not found!.\n");
+
         ob_end_flush();
-        $view = ob_get_contents();
-        return $view;
-        ob_end_clean();
     }
 
     public static function layout($path, $data)
@@ -34,41 +44,22 @@
         ob_start();
         header('Content-Type:text/html; charset=UTF-8');
         extract($data, EXTR_SKIP);
-        if (file_exists(LAYOUT . SEP . 'header.php'))
-            require LAYOUT . SEP . 'header.php';
 
-        if (file_exists(VIEW . '/' . $path . '_view.php'))
-            require VIEW . '/' . $path . '_view.php';
+        $header_path = LAYOUT . SEP . 'header.php';
+        if (self::file_exists_cached($header_path))
+            require $header_path;
+
+        $view_path = VIEW . '/' . $path . '_view.php';
+        if (self::file_exists_cached($view_path))
+            require $view_path;
         else
             print("View file not found!.\n");
 
-        if (file_exists(LAYOUT . SEP . 'footer.php'))
-            require LAYOUT . SEP . 'footer.php';
+        $footer_path = LAYOUT . SEP . 'footer.php';
+        if (self::file_exists_cached($footer_path))
+            require $footer_path;
+
         ob_end_flush();
-        $view = ob_get_contents();
-        return $view;
-        ob_end_clean();
-    }
-
-    public static function admin($path, $data)
-    {
-        ob_start();
-        header('Content-Type:text/html; charset=UTF-8');
-        extract($data, EXTR_SKIP);
-        if (file_exists(LAYOUT . SEP . 'admin_header.php'))
-            require LAYOUT . SEP . 'admin_header.php';
-
-        if (file_exists(VIEW . '/' . $path . '_view.php'))
-            require VIEW . '/' . $path . '_view.php';
-        else
-            print("View file not found!.\n");
-
-        if (file_exists(LAYOUT . SEP . 'admin_footer.php'))
-            require LAYOUT . SEP . 'admin_footer.php';
-        ob_end_flush();
-        $view = ob_get_contents();
-        return $view;
-        ob_end_clean();
     }
 
     public static function json($data)

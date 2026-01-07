@@ -3,30 +3,24 @@
 	public $postgresql;
 	private static $instance = null;
 
-	public function __construct()
+	private function __construct()
 	{
-		if (self::$instance === null) {
-			$config = app::get_config();
-			$db_config = isset($config['postgresql']) ? $config['postgresql'] : $config;
-			try {
-				$this->postgresql = new PDO(
-					"pgsql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];",
-					$db_config['db_user'],
-					$db_config['db_pass'],
-					[
-						PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
-						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-					]
-				);
-				$this->postgresql->exec("SET client_encoding = 'UTF8'");
-				self::$instance = $this;
-			} catch (PDOException $e) {
-				error_log('Postgres connection error: ' . $e->getMessage());
-				$this->postgresql = null;
-			}
-		} else {
-			// Eğer zaten bir instance varsa, var olan PDO bağlantısını yeni nesneye kopyala
-			$this->postgresql = self::$instance->postgresql;
+		$config = app::get_config();
+		$db_config = isset($config['postgresql']) ? $config['postgresql'] : $config;
+		try {
+			$this->postgresql = new PDO(
+				"pgsql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];",
+				$db_config['db_user'],
+				$db_config['db_pass'],
+				[
+					PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
+					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+				]
+			);
+			$this->postgresql->exec("SET client_encoding = 'UTF8'");
+		} catch (PDOException $e) {
+			error_log('Postgres connection error: ' . $e->getMessage());
+			$this->postgresql = null;
 		}
 	}
 

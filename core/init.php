@@ -4,16 +4,20 @@
 	public static function slug($str)
 	{
 		$str = $str ?? '';
-		$tr = array('ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç');
-		$eng = array('s', 's', 'i', 'i', 'g', 'g', 'u', 'u', 'o', 'o', 'c', 'c');
-		$str = str_replace($tr, $eng, $str);
-		$str = preg_replace('/&.+?;/', '', $str);
-		$str = preg_replace('/[^%a-zA-Z0-9 _-]/', '', $str);
+		
+		// Türkçe karakterleri çevir
+		static $tr = ['s', 'S', 'i', 'I', 'g', 'G', 'u', 'U', 'o', 'O', 'C', 'c'];
+		static $eng = ['ş', 'Ş', 'ı', 'İ', 'ğ', 'Ğ', 'ü', 'Ü', 'ö', 'Ö', 'Ç', 'ç'];
+		$str = str_replace($eng, $tr, $str);
+		
+		// Tek regex ile HTML entities ve geçersiz karakterleri temizle
+		$str = preg_replace('/[^a-zA-Z0-9 _-]+/', '', $str);
+		
+		// Boşlukları tire yap ve çoklu tireleri temizle
 		$str = preg_replace('/\s+/', '-', $str);
-		$str = preg_replace('|-+|', '-', $str);
-		$str = trim((string)$str, '-');
-		$str = strtolower($str);
-		return $str;
+		$str = preg_replace('/-{2,}/', '-', $str);
+		
+		return strtolower(trim($str, '-'));
 	}
 
     public static function text_short($text, $chars_limit)
@@ -46,25 +50,33 @@
 
 	public static function random_text_code($length = 4)
 	{
-		$characters = array();
-		$characters = array_merge(range(0, 9), range('a', 'z'), range('A', 'Z'));
-		srand((int)((float)microtime() * 100000));
-		shuffle($characters);
+		// Performanslı: shuffle ve srand yerine random_bytes
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$result = '';
-		for ($i = 0; $i < $length; $i++) {
-			$result .= $characters[$i];
+		$max = strlen($characters) - 1;
+		
+		try {
+			for ($i = 0; $i < $length; $i++) {
+				$result .= $characters[random_int(0, $max)];
+			}
+		} catch (Exception $e) {
+			// Fallback to mt_rand if random_int fails
+			for ($i = 0; $i < $length; $i++) {
+				$result .= $characters[mt_rand(0, $max)];
+			}
 		}
-		unset($characters);
+		
 		return $result;
 	}
 
 	public static function days_left($date)
 	{
-		$coming = new DateTime($date);
-		$now = new DateTime(date('d-m-Y'));
-		$difference = $coming->diff($now);
-		$remaining_day = $difference->format('%a');
-		return $remaining_day;
+		// Performanslı: Strtotime kullanarak daha hızlı hesaplama
+		$timestamp = is_numeric($date) ? $date : strtotime($date);
+		if (!$timestamp) return 0;
+		
+		$today = strtotime('today');
+		return (int)(($timestamp - $today) / 86400);
 	}
 
 	function time_left($tarih)

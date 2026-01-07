@@ -28,16 +28,27 @@ DEFINE("LAYOUT", APP . SEP . "layout");
 DEFINE("APPINI", ROOT . SEP . 'app.ini');
 
 spl_autoload_register(function ($className) {
-    if (file_exists(CORE . SEP . $className . ".php")) {
-        require_once CORE . SEP . $className . ".php";
+    static $class_cache = [];
+    
+    // Cache'de varsa direkt yükle
+    if (isset($class_cache[$className])) {
+        require_once $class_cache[$className];
         return;
     }
-    if (file_exists(CONTROLLER . SEP . $className . ".php")) {
-        require_once CONTROLLER . SEP . $className . ".php";
-        return;
-    }
-    if (file_exists(MODEL . SEP . $className . ".php")) {
-        require_once MODEL . SEP . $className . ".php";
+    
+    // Sırasıyla kontrol et ve cache'e kaydet
+    $paths = [
+        CORE . SEP . $className . ".php",
+        CONTROLLER . SEP . $className . ".php",
+        MODEL . SEP . $className . ".php"
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            $class_cache[$className] = $path;
+            require_once $path;
+            return;
+        }
     }
 });
 
