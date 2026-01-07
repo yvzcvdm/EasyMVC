@@ -239,9 +239,6 @@ app/controller/api/v1/users/profile/settings.php
 **⚠️ Dikkat:**
 - Klasörler sadece dosyanın **yolunu** belirler
 - Class adı her zaman **dosya adı** ile aynıdır
-- Aynı dosya adı farklı klasörlerde kullanılabilir:
-  - `admin/user.php` → class user
-  - `api/user.php` → class user (Aynı class adı, farklı yol)
 
 **� ÖNEMLİ - Class Çakışması:**
 Farklı klasörlerde aynı dosya adını kullanırsanız class çakışması olur! Bunu önlemek için:
