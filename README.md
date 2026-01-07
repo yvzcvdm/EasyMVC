@@ -243,7 +243,24 @@ app/controller/api/v1/users/profile/settings.php
   - `admin/user.php` → class user
   - `api/user.php` → class user (Aynı class adı, farklı yol)
 
-**💡 İpucu:** Klasör derinliği sınırsızdır. Projenizin yapısına göre istediğiniz kadar organize edebilirsiniz!
+**� ÖNEMLİ - Class Çakışması:**
+Farklı klasörlerde aynı dosya adını kullanırsanız class çakışması olur! Bunu önlemek için:
+
+```php
+// ❌ YANLIŞ - Class çakışması
+app/controller/user.php           → class user
+app/controller/admin/user.php     → class user  (ÇAKIŞMA!)
+
+// ✅ DOĞRU - Prefix/suffix ekle
+app/controller/user.php           → class user
+app/controller/admin/user.php     → class admin_user  ✓
+
+// Veya farklı dosya adı kullan
+app/controller/user.php           → class user
+app/controller/admin/user_admin.php → class user_admin  ✓
+```
+
+**�💡 İpucu:** Klasör derinliği sınırsızdır. Projenizin yapısına göre istediğiniz kadar organize edebilirsiniz!
 
 #### 🚦 Routing Örnekleri (Gerçek Hayat Senaryoları)
 
