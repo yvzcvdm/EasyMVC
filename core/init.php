@@ -154,12 +154,6 @@
 		return $mail->Send() ? true : false;
 	}
 
-	/**
-	 * Tarayıcının Accept-Language başlığından dil kodunu alır ve desteklenen dillerle eşleştirir
-	 * 
-	 * @param array $availableLanguages Desteklenen dillerin listesi (dizi anahtarları)
-	 * @return string Eşleşen dil kodu veya boş string
-	 */
 	public static function getBrowserLanguage($availableLanguages = [])
 	{
 		$accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
@@ -183,92 +177,6 @@
 		}
 
 		return '';
-	}
-
-	public static function translate($key)
-	{
-		static $cache = null;
-		$lang_key = $_COOKIE['lang'] ?? (init::getBrowserLanguage(['tr', 'en', 'de']) ?: 'de');
-		$requested = (string)$lang_key;
-		$key = (string)$key; 
-
-		// İlk çağırmada tüm JSON dosyalarını yükle ve dil adına göre cache'le
-		if ($cache === null) {
-			$cache = [];
-			// Eğer ana dizin `ROOT` olarak tanımlandıysa onu kullan, değilse __DIR__ üzerinden hesapla
-			$dir = realpath(rtrim(ROOT, '/\\') . '/public/local');
-			if ($dir && is_dir($dir)) {
-				foreach (glob($dir . '/*.json') as $file) {
-					$name = pathinfo($file, PATHINFO_FILENAME);
-					$content = @file_get_contents($file);
-					$json = @json_decode($content, true);
-					if (is_array($json)) {
-						$cache[$name] = $json;
-					}
-				}
-			}
-		}
-
-		// Eğer hiç dil dosyası yoksa çık
-		if (empty($cache)) {
-			return '';
-		}
-
-		// Normalize talep edilen dil (eğer verildiyse)
-		$requested = strtolower(preg_replace('/[^a-z]/', '', (string)$requested));
-
-		// Karar verme sırası:
-		// 1) Eğer fonksiyona açıkça geçilmiş ve mevcutsa onu kullan
-		// 2) Eğer cookie'de `lang` varsa ve destekleniyorsa onu kullan
-		// 3) Tarayıcı `Accept-Language` başlığına göre ilk uygun dili kullan
-		// 4) Cache içindeki ilk dili kullan (fallback)
-
-		$lang = '';
-
-		if ($requested !== '' && isset($cache[$requested])) {
-			$lang = $requested;
-		}
-
-		if ($lang === '') {
-			$cookieLang = '';
-			if (!empty($_COOKIE['lang'])) {
-				$cookieLang = strtolower(preg_replace('/[^a-z]/', '', (string)$_COOKIE['lang']));
-			}
-			if ($cookieLang !== '' && isset($cache[$cookieLang])) {
-				$lang = $cookieLang;
-			}
-		}
-
-		if ($lang === '') {
-			// Tarayıcı dilini al
-			$browserLang = self::getBrowserLanguage(array_keys($cache));
-			if ($browserLang !== '' && isset($cache[$browserLang])) {
-				$lang = $browserLang;
-			}
-		}
-
-		if ($lang === '') {
-			// fallback: cache içindeki ilk anahtar
-			$keys = array_keys($cache);
-			$lang = $keys[0];
-		}
-
-		$node = $cache[$lang] ?? [];
-
-		if ($key === '') {
-			return is_array($node) ? '' : (string)$node;
-		}
-
-		$parts = explode('.', $key);
-		foreach ($parts as $part) {
-			if (is_array($node) && array_key_exists($part, $node)) {
-				$node = $node[$part];
-			} else {
-				return '';
-			}
-		}
-
-		return is_array($node) ? '' : (string)$node;
 	}
 
 }
