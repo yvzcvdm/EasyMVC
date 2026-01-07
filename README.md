@@ -37,16 +37,40 @@ http://example.com/[controller]/[method]/[param1]/[param2]/[param3]/...
 
 #### 📂 Dosya ve URL İlişkisi
 
+**🔥 Önemli:** Controller'lar istediğiniz kadar iç içe klasörde olabilir. Derinlik sınırı yoktur!
+
+**⚡ Class Adı Kuralı:** Class adı sadece **dosya adı**dır. Klasörler class adına dahil olmaz!
+
 ```
-Dizin Yapısı                           URL                              Çalışan Method
+Dizin Yapısı                           URL                              Çalışan Class::Method
 ──────────────────────────────────────────────────────────────────────────────────────────
 app/controller/index.php           → example.com/                    → index::index()
 app/controller/blog.php            → example.com/blog                → blog::index()
 app/controller/blog.php            → example.com/blog/detail/5       → blog::detail()
-app/controller/admin/user.php      → example.com/admin/user         → admin_user::index()
-app/controller/admin/user.php      → example.com/admin/user/edit/10 → admin_user::edit()
-app/controller/api/v1/product.php  → example.com/api/v1/product     → api_v1_product::index()
+
+// Tek seviye klasör
+app/controller/admin/user.php      → example.com/admin/user         → user::index()
+app/controller/admin/user.php      → example.com/admin/user/edit/10 → user::edit()
+
+// İki seviye klasör
+app/controller/api/v1/product.php  → example.com/api/v1/product     → product::index()
+app/controller/api/v1/user.php     → example.com/api/v1/user/show/5 → user::show()
+
+// Üç seviye klasör (ve daha fazlası...)
+app/controller/admin/system/settings/backup.php
+                                   → example.com/admin/system/settings/backup
+                                   → backup::index()
+
+app/controller/dashboard/reports/sales/monthly.php
+                                   → example.com/dashboard/reports/sales/monthly/view/2024
+                                   → monthly::view()
 ```
+
+**✨ Önemli Noktalar:**
+- 📁 **Sınırsız Derinlik:** İstediğiniz kadar iç içe klasör oluşturabilirsiniz
+- 🔗 **Class Adı:** Sadece **dosya adı** (api/v1/product.php → class product)
+- 📂 **URL Yapısı:** /klasör/klasör/dosya/method/parametre
+- ⚡ **Otomatik Yükleme:** Framework dosyayı bulur ve class'ı yükler
 
 #### 🔄 Routing Akışı (Adım Adım)
 
@@ -98,11 +122,11 @@ URL: http://example.com/admin/user/edit/10
 Akış:
 1. URL parse → path: "admin/user", method: "edit", params: ["10"]
 2. app/controller/admin/user.php yükle
-3. Class adı: admin_user (klasör adı + dosya adı, underscore ile)
+3. Class adı: user (sadece dosya adı)
 4. edit() methodunu çağır
 
 Dosya: app/controller/admin/user.php
-class admin_user {
+class user {
     public function edit($data) {
         $user_id = $data["uri_0"];  // "10"
         // Kullanıcı düzenleme...
@@ -145,15 +169,42 @@ class shop_product {
 
 #### 🎨 Class Adlandırma Kuralları
 
+**🔥 Temel Kural:** Class adı **SADECE dosya adı**dır! Klasörler class adına dahil olmaz.
+
 ```
-Dosya Yolu                        Class Adı           Açıklama
-─────────────────────────────────────────────────────────────────────────────
-app/controller/blog.php       →  blog                Basit controller
-app/controller/user_post.php  →  user_post           Alt çizgi korunur
-app/controller/admin/user.php →  admin_user          Klasör + dosya, underscore
-app/controller/api/v1/auth.php → api_v1_auth         Çok seviyeli klasör
-app/controller/Admin/User.php →  Admin_User          Büyük harf korunur (önerilmez)
+Dosya Yolu                                    Class Adı           Açıklama
+───────────────────────────────────────────────────────────────────────────────────────
+app/controller/blog.php                  →  blog              Basit controller
+app/controller/user_post.php             →  user_post         Alt çizgi korunur
+
+// Tek seviye klasör
+app/controller/admin/user.php            →  user              Sadece dosya adı
+app/controller/admin/settings.php        →  settings          Sadece dosya adı
+
+// İki seviye klasör
+app/controller/api/v1/auth.php           →  auth              Sadece dosya adı
+app/controller/api/v2/products.php       →  products          Sadece dosya adı
+
+// Üç seviye klasör
+app/controller/admin/system/backup.php   →  backup            Sadece dosya adı
+app/controller/dashboard/user/profile.php → profile           Sadece dosya adı
+
+// Daha derin yapılar
+app/controller/admin/settings/security/auth.php
+                                         →  auth              Sadece dosya adı
+
+app/controller/api/v1/users/profile/settings.php
+                                         →  settings          Sadece dosya adı
 ```
+
+**⚠️ Dikkat:**
+- Klasörler sadece dosyanın **yolunu** belirler
+- Class adı her zaman **dosya adı** ile aynıdır
+- Aynı dosya adı farklı klasörlerde kullanılabilir:
+  - `admin/user.php` → class user
+  - `api/user.php` → class user (Aynı class adı, farklı yol)
+
+**💡 İpucu:** Klasör derinliği sınırsızdır. Projenizin yapısına göre istediğiniz kadar organize edebilirsiniz!
 
 #### 🚦 Routing Örnekleri (Gerçek Hayat Senaryoları)
 
@@ -213,7 +264,7 @@ public function show($data) {
 ✅ **Zero Configuration** - Hiçbir route dosyası yok!
 ✅ **Dosya = Route** - Klasör yapısı direkt URL yapısıdır
 ✅ **SEO Friendly** - Temiz ve anlamlı URL'ler
-✅ **Ölçeklenebilir** - Sınırsız depth desteği
+✅ **Sınırsız Derinlik** - İstediğiniz kadar iç içe klasör (örn: `/admin/system/settings/backup`)
 ✅ **Bakım Kolay** - Dosya ekle/sil = Route ekle/sil
 ✅ **Anlaşılır** - Developer URL'ye bakarak dosyayı bilir
 ✅ **Hızlı** - Route parse overhead'i minimum
@@ -247,12 +298,12 @@ class blog {  // Doğru class adı
 
 // ❌ YANLIŞ: Alt klasör class adı yanlış
 // Dosya: app/controller/admin/user.php
-class user {  // Eksik prefix!
+class admin_user {  // Fazla prefix!
 }
 
-// ✅ DOĞRU: Alt klasör + dosya adı
+// ✅ DOĞRU: Sadece dosya adı
 // Dosya: app/controller/admin/user.php
-class admin_user {  // Klasör_dosya formatı
+class user {  // Sadece dosya adı
 }
 ```
 
@@ -773,7 +824,7 @@ init::my_custom_function();
 Model Dosyası: app/model/blog.php          → class: blog
 Model Dosyası: app/model/user_post.php     → class: user_post
 Controller Dosyası: app/controller/blog.php → class: blog
-Controller Dosyası: app/controller/admin/user.php → class: admin_user
+Controller Dosyası: app/controller/admin/user.php → class: user (sadece dosya adı)
 ```
 
 **Controller'de Model Kullanımı:**
@@ -1404,7 +1455,7 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
 ```php
 // app/controller/api/users.php
-class api_users
+class users  // Sadece dosya adı
 {
     public function index($data)
     {
@@ -1538,6 +1589,77 @@ class download
 }
 ```
 
+### Derin Klasör Yapısı Örneği
+
+```php
+// URL: example.com/admin/system/settings/backup/create
+// Dosya: app/controller/admin/system/settings/backup.php
+
+class backup  // Sadece dosya adı
+{
+    public function create($data)
+    {
+        // Class adı sadece dosya adıdır (backup)
+        // Klasörler (admin/system/settings) sadece yolu belirler
+        
+        $backup_type = $data["uri_0"] ?? "full";  // create sonrası parametre
+        
+        // Yedekleme işlemi...
+        echo json_encode([
+            "success" => true,
+            "message" => "Backup created",
+            "type" => $backup_type
+        ]);
+    }
+    
+    public function index($data)
+    {
+        // URL: example.com/admin/system/settings/backup
+        // Yedek listesi göster
+        view::layout("admin/system/settings/backup_list", $data);
+    }
+}
+```
+
+**🔥 Güçlü Yön:** EasyMVC'de klasör derinliği sınırsızdır! Projenizi istediğiniz kadar organize edebilirsiniz:
+
+```
+app/controller/
+├── admin/
+│   ├── dashboard/
+│   │   ├── analytics.php      → class analytics
+│   │   └── reports.php        → class reports
+│   ├── system/
+│   │   ├── settings/
+│   │   │   ├── backup.php     → class backup
+│   │   │   ├── security.php   → class security
+│   │   │   └── mail.php       → class mail
+│   │   └── logs/
+│   │       ├── access.php     → class access
+│   │       └── error.php      → class error
+│   └── users/
+│       ├── profile/
+│       │   └── settings.php   → class settings
+│       └── permissions.php    → class permissions
+├── api/
+│   ├── v1/
+│   │   ├── auth/
+│   │   │   ├── login.php      → class login
+│   │   │   └── register.php   → class register
+│   │   └── users.php          → class users
+│   └── v2/
+│       └── users.php          → class users
+└── blog.php                   → class blog
+```
+
+**⚡ Not:** Farklı klasörlerde aynı class adı kullanılabilir:
+- `api/v1/users.php` → class users
+- `api/v2/users.php` → class users
+- `admin/users/settings.php` → class settings
+
+Framework doğru dosyayı otomatik bulur ve yükler!
+```
+
 ---
 
 ## 📚 Ek Kaynaklar
@@ -1563,7 +1685,7 @@ C: `core/error.php` dosyasını düzenleyin.
 C: Evet! `$data["app"]["method"]` ile HTTP method'unu kontrol edin.
 
 **S: Alt klasörde controller oluştururken class adı?**
-C: Klasör adı + dosya adı, underscore ile: `admin/user.php` → `class admin_user`
+C: Sadece dosya adı: `admin/user.php` → `class user` (Klasörler class adına dahil olmaz)
 
 ---
 
