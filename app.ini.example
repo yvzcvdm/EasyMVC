@@ -9,7 +9,7 @@ site_logo   = 'https://example.com/public/images/logo.png';
 db_server	= "localhost"
 db_name		= "dbname"
 db_user		= "root"
-db_pass	    = "Wiveda++33"
+db_pass	    = ""
 db_port		= "3306"
 
 [sqlite]
