@@ -1,9 +1,20 @@
 <?php
+// Session cookie ayarlarını yapılandır
+session_set_cookie_params([
+    'lifetime' => 86400 * 30,  // 30 gün
+    'path' => '/',
+    'domain' => '',
+    'secure' => false,          // HTTP için false, HTTPS için true
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
 session_start();
+
 ini_set("log_errors", 1);
 ini_set("error_log", "error.log");
 error_reporting(E_ALL);
-ini_set("display_errors", 1);  // Bu satırı ekleyin
+ini_set("display_errors", 1);
 date_default_timezone_set('Europe/Istanbul');
 
 DEFINE("ROOT", __DIR__);
@@ -17,22 +28,17 @@ DEFINE("LAYOUT", APP . SEP . "layout");
 DEFINE("APPINI", ROOT . SEP . 'app.ini');
 
 spl_autoload_register(function ($className) {
-    // CORE klasöründen yükle
     if (file_exists(CORE . SEP . $className . ".php")) {
         require_once CORE . SEP . $className . ".php";
         return;
     }
-    
-    // CONTROLLER ve MODEL için de çalışsın (opsiyonel)
     if (file_exists(CONTROLLER . SEP . $className . ".php")) {
         require_once CONTROLLER . SEP . $className . ".php";
         return;
     }
-    
     if (file_exists(MODEL . SEP . $className . ".php")) {
         require_once MODEL . SEP . $className . ".php";
     }
 });
-
 
 new app();

@@ -7,7 +7,7 @@
 	{
 		if (self::$instance === null) {
 			$config = app::get_config();
-			$db_config = isset($config['mysql']) ? array_merge($config, $config['mysql']) : $config;
+			$db_config = isset($config['mysql']) ? $config['mysql'] : $config;
 			try {
 				$this->mysql = new PDO(
 					"mysql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];charset=utf8mb4",

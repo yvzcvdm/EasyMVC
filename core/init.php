@@ -16,11 +16,15 @@
 		return $str;
 	}
 
-    function text_short($text, $chars_limit)
+    public static function text_short($text, $chars_limit)
 	{
+		if ($text === null || $text === '') {
+			return '';
+		}
+		$text = (string)$text;
 		if (strlen($text) > $chars_limit) {
 			$new_text = substr($text, 0, $chars_limit);
-				$new_text = trim((string)$new_text);
+			$new_text = trim($new_text);
 			return $new_text . "...";
 		} else {
 			return $text;
@@ -79,23 +83,23 @@
 		}
 	}
 
-	public function valid_email($e)
+	public static function valid_email($e)
 	{
 		return (bool)preg_match("`^[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_\`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`i", trim((string)$e));
 	}
 
-	public function valid_password($password)
+	public static function valid_password($password)
 	{
 		return preg_match('/\S*((?=\S{8,})(?=\S*[A-Z]))\S*/', $password);
 	}
 
-	public function valid_phone($phone)
+	public static function valid_phone($phone)
 	{
-		$phone = $this->clean_phone($phone);
+		$phone = self::clean_phone($phone);
 		return (is_numeric($phone) && strlen($phone) == 10) ? true : false;
 	}
 
-	public function valid_tc_number($tc_number)
+	public static function valid_tc_number($tc_number)
 	{
 		$first = null;
 		$last = null;
@@ -126,7 +130,7 @@
 		}
 	}
     
-    public function clean_phone($phone)
+    public static function clean_phone($phone)
 	{
 		$phone = preg_replace('/\D+/', '', $phone);
 		$filtered_phone_number = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
@@ -134,13 +138,13 @@
 		return $phone_to_check;
 	}
 
-	public function clean_mail($mail)
+	public static function clean_mail($mail)
 	{
 		$mail = filter_var($mail, FILTER_SANITIZE_EMAIL);
 		return $mail;
 	}
 
-	public function send_mail($email, $subject, $content)
+	public static function send_mail($email, $subject, $content)
 	{
 		$mail = new mail();
         $mail->from("admin@weebim.com", "Weebim");
@@ -150,10 +154,41 @@
 		return $mail->Send() ? true : false;
 	}
 
+	/**
+	 * Tarayıcının Accept-Language başlığından dil kodunu alır ve desteklenen dillerle eşleştirir
+	 * 
+	 * @param array $availableLanguages Desteklenen dillerin listesi (dizi anahtarları)
+	 * @return string Eşleşen dil kodu veya boş string
+	 */
+	public static function getBrowserLanguage($availableLanguages = [])
+	{
+		$accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+		if ($accept === '' || empty($availableLanguages)) {
+			return '';
+		}
+
+		// Örnek: "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
+		$parts = preg_split('/[,;]/', $accept);
+		foreach ($parts as $p) {
+			$p = trim($p);
+			if ($p === '') continue;
+			
+			// İlk kısmı al (örn tr-TR -> tr)
+			$code = strtolower(explode('-', $p)[0]);
+			$code = preg_replace('/[^a-z]/', '', $code);
+			
+			if ($code !== '' && in_array($code, $availableLanguages)) {
+				return $code;
+			}
+		}
+
+		return '';
+	}
+
 	public static function translate($key)
 	{
-		static $lang_key = $_COOKIE['lang'] ?? 'de';
 		static $cache = null;
+		$lang_key = $_COOKIE['lang'] ?? (init::getBrowserLanguage(['tr', 'en', 'de']) ?: 'de');
 		$requested = (string)$lang_key;
 		$key = (string)$key; 
 
@@ -205,21 +240,10 @@
 		}
 
 		if ($lang === '') {
-			$accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-			if ($accept !== '') {
-				// Örnek: "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
-				$parts = preg_split('/[,;]/', $accept);
-				foreach ($parts as $p) {
-					$p = trim($p);
-					if ($p === '') continue;
-					// alttaki pattern ile önceki kısmı al (örn tr-TR -> tr)
-					$code = strtolower(explode('-', $p)[0]);
-					$code = preg_replace('/[^a-z]/', '', $code);
-					if ($code !== '' && isset($cache[$code])) {
-						$lang = $code;
-						break;
-					}
-				}
+			// Tarayıcı dilini al
+			$browserLang = self::getBrowserLanguage(array_keys($cache));
+			if ($browserLang !== '' && isset($cache[$browserLang])) {
+				$lang = $browserLang;
 			}
 		}
 

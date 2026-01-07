@@ -26,12 +26,13 @@
 
     public function __construct()
     {
-        $this->config = app::get_config();
-        $this->server = $this->config["mail_server"];
-        $this->username = $this->config["mail_user"];
-        $this->password = $this->config["mail_pass"];
-        $this->port = $this->config["mail_port"];
-        $this->secure = $this->config["mail_secure"];
+        $app_config = app::get_config();
+        $this->config = isset($app_config['email']) ? $app_config['email'] : [];
+        $this->server = $this->config["mail_server"] ?? '';
+        $this->username = $this->config["mail_user"] ?? '';
+        $this->password = $this->config["mail_pass"] ?? '';
+        $this->port = $this->config["mail_port"] ?? '25';
+        $this->secure = $this->config["mail_secure"] ?? '';
 
         // Define connection hostname and localhost
         $this->hostname = $this->server;

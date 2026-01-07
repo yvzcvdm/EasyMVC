@@ -7,7 +7,7 @@
 	{
 		if (self::$instance === null) {
 			$config = app::get_config();
-			$db_config = isset($config['postgresql']) ? array_merge($config, $config['postgresql']) : $config;
+			$db_config = isset($config['postgresql']) ? $config['postgresql'] : $config;
 			try {
 				$this->postgresql = new PDO(
 					"pgsql:host=$db_config[db_server];port=$db_config[db_port];dbname=$db_config[db_name];",

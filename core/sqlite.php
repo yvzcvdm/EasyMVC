@@ -7,7 +7,7 @@
 	{
 		if (self::$instance === null) {
 			$config = app::get_config();
-			$db_config = isset($config['sqlite']) ? array_merge($config, $config['sqlite']) : $config;
+			$db_config = isset($config['sqlite']) ? $config['sqlite'] : $config;
 			
 			// SQLite database path
 			$db_dir = ROOT . SEP . 'database';

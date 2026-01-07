@@ -30,11 +30,6 @@
 
     public static function layout($path, $data)
     {
-        if (isset($data["app"]["get"]["view_json"]))
-            return self::json($data) . die();
-        elseif (isset($data["app"]["get"]["view_html"]))
-            return self::html($path, $data) . die();
-
         // ob_start(array("view", "sanitize_output"));
         ob_start();
         header('Content-Type:text/html; charset=UTF-8');
@@ -49,6 +44,27 @@
 
         if (file_exists(LAYOUT . SEP . 'footer.php'))
             require LAYOUT . SEP . 'footer.php';
+        ob_end_flush();
+        $view = ob_get_contents();
+        return $view;
+        ob_end_clean();
+    }
+
+    public static function admin($path, $data)
+    {
+        ob_start();
+        header('Content-Type:text/html; charset=UTF-8');
+        extract($data, EXTR_SKIP);
+        if (file_exists(LAYOUT . SEP . 'admin_header.php'))
+            require LAYOUT . SEP . 'admin_header.php';
+
+        if (file_exists(VIEW . '/' . $path . '_view.php'))
+            require VIEW . '/' . $path . '_view.php';
+        else
+            print("View file not found!.\n");
+
+        if (file_exists(LAYOUT . SEP . 'admin_footer.php'))
+            require LAYOUT . SEP . 'admin_footer.php';
         ob_end_flush();
         $view = ob_get_contents();
         return $view;

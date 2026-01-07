@@ -11,7 +11,7 @@ class app
     private $uri;
     private $error;
     public $config;
-    
+
     // Statik config cache
     private static $config_cache = null;
 
@@ -21,7 +21,7 @@ class app
         $this->config = self::get_config();
         $this->uri = $this->get_uri();
         $this->root = $this->get_root();
-        
+
         // Parse URL segments başlayarak folder/file/method'u bul
         $this->parse_segments();
         $this->params = $this->input();
@@ -48,19 +48,19 @@ class app
         // URI'den root'u kaldır
         $remaining = substr($this->uri, strlen($this->root));
         $remaining = trim($remaining, '/');
-        
+
         // Boş string ise root
         if (empty($remaining)) {
             $this->segments = [];
             $this->resolve_controller('', []);
             return;
         }
-        
+
         // URL segments'i al
         $segments = explode('/', $remaining);
         $segments = array_filter($segments);
         $segments = array_values($segments);
-        
+
         // İlk segmenti klasör olarak denetle, sonra dosya ve method
         // segments'i kopyala çünkü resolve_controller içinde array_shift yapılacak
         $remaining_segments = $segments;
@@ -75,44 +75,44 @@ class app
             $this->load_controller($current_path, 'index', []);
             return;
         }
-        
+
         $segment = array_shift($remaining_segments);
         $segment = init::slug($segment);
-        
+
         // Segment adını validate et
         if (!preg_match('/^[a-zA-Z0-9_-]+$/', $segment)) {
             http_response_code(404);
             require_once CORE . SEP . "error.php";
             exit;
         }
-        
+
         // Path'i düzgun şekilde oluştur
         $next_path = empty($current_path) ? SEP . $segment : $current_path . SEP . $segment;
-        
+
         $folder_path = CONTROLLER . $next_path;
         $file_path = CONTROLLER . $next_path . '.php';
-        
+
         // 1. Klasör mü diye kontrol et
         if (is_dir($folder_path)) {
             // Klasör bulundu, klasör içinde devam et
             $this->resolve_controller($next_path, $remaining_segments);
             return;
         }
-        
+
         // 2. Dosya mı diye kontrol et
         if (file_exists($file_path)) {
             // Dosya bulundu, bu dosyada method'u ara
             $this->load_controller($current_path, $segment, $remaining_segments);
             return;
         }
-        
+
         // 3. Ne klasör ne dosya, önceki klasöre index.php'de method ara
         if ($current_path === '') {
             // Root'ta index.php'de segment adını method olarak dene
             $this->load_controller('', 'index', [$segment, ...$remaining_segments]);
             return;
         }
-        
+
         // current_path'te index.php'de segment adını method olarak dene
         $this->load_controller($current_path, 'index', [$segment, ...$remaining_segments]);
     }
@@ -122,36 +122,36 @@ class app
         // Dosya yolu kontrol et
         $path = empty($folder_path) ? '' : $folder_path;
         $controller_file = CONTROLLER . $path . SEP . $file_name . '.php';
-        
+
         // Current path'i sakla
         $this->current_path = $folder_path;
-        
+
         if (!file_exists($controller_file)) {
             // Eğer index değilse, index.php'ye geri dön
             if ($file_name !== 'index') {
                 $this->load_controller($folder_path, 'index', [$file_name, ...$remaining_segments]);
                 return;
             }
-            
+
             // index.php bile yok, 404
             http_response_code(404);
             require_once CORE . SEP . "error.php";
             exit;
         }
-        
+
         // Dosya class adını belirle (file name = class name)
         $this->controller_class = $file_name;
-        
+
         // require dosya
         require_once $controller_file;
-        
+
         // Sınıf var mı kontrol et
         if (!class_exists($this->controller_class)) {
             http_response_code(404);
             require_once CORE . SEP . "error.php";
             exit;
         }
-        
+
         // Method adını belirle.
         $instance = new $this->controller_class([]);
         $method = 'index';
@@ -210,7 +210,7 @@ class app
             }
             $method = 'index';
         }
-        
+
         $this->method_name = $method;
         // Kalan segments parametreler olarak sakla
         $this->segments = $remaining_segments;
@@ -233,13 +233,13 @@ class app
     }
 
     public static function array_clear($array)
-	{
-		array_walk_recursive($array, function (&$item) {
-			$item = (string) $item;
-			$item = htmlspecialchars(addslashes(stripslashes(trim($item))));
-		});
-		return $array;
-	}
+    {
+        array_walk_recursive($array, function (&$item) {
+            $item = (string) $item;
+            $item = htmlspecialchars(addslashes(stripslashes(trim($item))));
+        });
+        return $array;
+    }
 
     private function input()
     {
@@ -289,7 +289,7 @@ class app
         } else {
             $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         }
-        
+
         return filter_var(trim($ip), FILTER_VALIDATE_IP) ?: '0.0.0.0';
     }
 
@@ -298,11 +298,11 @@ class app
         if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
             return $_SERVER['HTTP_AUTHORIZATION'];
         }
-        
+
         if (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
             return $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
         }
-        
+
         return '';
     }
 
@@ -319,13 +319,13 @@ class app
             'Opera Mini',
             'IEMobile'
         ];
-        
+
         foreach ($mobile_patterns as $pattern) {
             if (stripos($user_agent, $pattern) !== false) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -359,16 +359,16 @@ class app
         if (self::$config_cache !== null) {
             return self::$config_cache;
         }
-        
+
         $config_file = ROOT . SEP . 'app.ini';
         if (!is_file($config_file)) {
             self::$config_cache = false;
             return false;
         }
-        
-        $data = parse_ini_file($config_file);
+
+        $data = parse_ini_file($config_file, true);  // Section modunu aç
         self::$config_cache = is_array($data) ? $data : false;
-        
+
         return self::$config_cache;
     }
 
